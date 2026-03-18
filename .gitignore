@@ -1,0 +1,12 @@
+# 배포용 패키지
+*.zip
+
+# macOS
+.DS_Store
+
+# 스크린샷 및 홍보 이미지
+screenshots/
+promotional/
+
+# Claude 관련
+.claude/settings.local.json

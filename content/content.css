@@ -1,0 +1,500 @@
+/* content.css — 플로팅 패널 스타일 (Shadow DOM 없이 prefix로 격리) */
+
+/* ── 토글 버튼 ── */
+#jira-my-tickets-toggle {
+  position: fixed;
+  bottom: 80px;
+  right: 0;
+  z-index: 2147483646;
+  width: 40px;
+  height: 40px;
+  background: #0052cc;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: -2px 2px 8px rgba(0,0,0,0.25);
+  transition: background 0.15s, width 0.15s;
+  padding: 0;
+}
+
+#jira-my-tickets-toggle:hover {
+  background: #0065ff;
+  width: 44px;
+}
+
+#jira-my-tickets-toggle span {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1;
+}
+
+/* ── 패널 ── */
+#jira-my-tickets-panel {
+  position: fixed;
+  top: 0;
+  right: -340px;
+  width: 340px;
+  height: 100vh;
+  z-index: 2147483647;
+  background: #f4f5f7;
+  box-shadow: -4px 0 16px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 13px;
+  color: #172b4d;
+  transition: right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#jira-my-tickets-panel.jmt-panel--open {
+  right: 0;
+}
+
+/* ── 헤더 ── */
+#jira-my-tickets-panel .jmt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #0052cc;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+#jira-my-tickets-panel .jmt-header__title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+#jira-my-tickets-panel .jmt-header__actions {
+  display: flex;
+  gap: 4px;
+}
+
+#jira-my-tickets-panel .jmt-btn-settings--active {
+  background: rgba(255,255,255,0.25);
+}
+
+#jira-my-tickets-panel .jmt-btn-back {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 3px 7px 3px 0;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.15s;
+  margin-right: 4px;
+}
+
+#jira-my-tickets-panel .jmt-btn-back:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+#jira-my-tickets-panel .jmt-btn-refresh,
+#jira-my-tickets-panel .jmt-btn-settings,
+#jira-my-tickets-panel .jmt-btn-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 3px 7px;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+#jira-my-tickets-panel .jmt-btn-refresh:hover,
+#jira-my-tickets-panel .jmt-btn-settings:hover,
+#jira-my-tickets-panel .jmt-btn-close:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+#jira-my-tickets-panel .jmt-btn-refresh:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── 필터 바 공통 ── */
+#jira-my-tickets-panel .jmt-filter-bar {
+  display: flex;
+  background: #fff;
+  border-bottom: 1px solid #dfe1e6;
+  flex-shrink: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+#jira-my-tickets-panel .jmt-filter-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── 스프린트 필터 ── */
+#jira-my-tickets-panel .jmt-sprint-btn {
+  padding: 8px 14px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #6b778c;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+#jira-my-tickets-panel .jmt-sprint-btn--active {
+  color: #0052cc;
+  border-bottom-color: #0052cc;
+  font-weight: 600;
+}
+
+#jira-my-tickets-panel .jmt-sprint-btn:hover:not(.jmt-sprint-btn--active) {
+  background: #f4f5f7;
+  color: #172b4d;
+}
+
+/* ── 상태 필터 ── */
+#jira-my-tickets-panel .jmt-status-btn {
+  flex: 1;
+  padding: 6px 4px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #6b778c;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+#jira-my-tickets-panel .jmt-status-btn--active {
+  color: #0052cc;
+  border-bottom-color: #0052cc;
+  font-weight: 600;
+}
+
+#jira-my-tickets-panel .jmt-status-btn:hover:not(.jmt-status-btn--active) {
+  background: #f4f5f7;
+  color: #172b4d;
+}
+
+#jira-my-tickets-panel .jmt-status-btn__count {
+  font-size: 13px;
+  font-weight: 700;
+  color: inherit;
+}
+
+/* ── 바디 ── */
+#jira-my-tickets-panel .jmt-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+/* ── 로딩 ── */
+#jira-my-tickets-panel .jmt-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  color: #6b778c;
+  gap: 12px;
+}
+
+#jira-my-tickets-panel .jmt-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #dfe1e6;
+  border-top-color: #0052cc;
+  border-radius: 50%;
+  animation: jmt-spin 0.7s linear infinite;
+}
+
+@keyframes jmt-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── 빈 상태 ── */
+#jira-my-tickets-panel .jmt-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  color: #6b778c;
+  gap: 10px;
+}
+
+#jira-my-tickets-panel .jmt-empty__icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+#jira-my-tickets-panel .jmt-empty__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #172b4d;
+}
+
+#jira-my-tickets-panel .jmt-empty__desc {
+  font-size: 12px;
+  line-height: 1.6;
+  max-width: 220px;
+}
+
+#jira-my-tickets-panel .jmt-btn-primary {
+  margin-top: 8px;
+  padding: 8px 20px;
+  background: #0052cc;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+#jira-my-tickets-panel .jmt-btn-primary:hover {
+  background: #0065ff;
+}
+
+/* ── 티켓 목록 ── */
+#jira-my-tickets-panel .jmt-issue-count {
+  padding: 4px 14px 8px;
+  font-size: 11px;
+  color: #6b778c;
+}
+
+#jira-my-tickets-panel .jmt-issue {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid #ebecf0;
+  cursor: pointer;
+  transition: background 0.1s;
+  text-decoration: none;
+  color: inherit;
+}
+
+#jira-my-tickets-panel .jmt-issue:hover {
+  background: #e8f0fe;
+}
+
+#jira-my-tickets-panel .jmt-issue:last-child {
+  border-bottom: none;
+}
+
+#jira-my-tickets-panel .jmt-priority-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+}
+
+#jira-my-tickets-panel .jmt-issue__body {
+  flex: 1;
+  min-width: 0;
+}
+
+#jira-my-tickets-panel .jmt-issue__key {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0052cc;
+  letter-spacing: 0.2px;
+}
+
+#jira-my-tickets-panel .jmt-issue__summary {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #172b4d;
+  margin-top: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+#jira-my-tickets-panel .jmt-issue__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+#jira-my-tickets-panel .jmt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+#jira-my-tickets-panel .jmt-badge--blue-grey {
+  background: #dfe1e6;
+  color: #42526e;
+}
+
+#jira-my-tickets-panel .jmt-badge--yellow {
+  background: #fff0b3;
+  color: #172b4d;
+}
+
+#jira-my-tickets-panel .jmt-badge--green {
+  background: #e3fcef;
+  color: #006644;
+}
+
+#jira-my-tickets-panel .jmt-badge--default {
+  background: #dfe1e6;
+  color: #42526e;
+}
+
+/* ── 설정 뷰 ── */
+#jira-my-tickets-panel .jmt-settings {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#jira-my-tickets-panel .jmt-settings__section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#jira-my-tickets-panel .jmt-settings__title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #6b778c;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #dfe1e6;
+}
+
+#jira-my-tickets-panel .jmt-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#jira-my-tickets-panel .jmt-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #172b4d;
+}
+
+#jira-my-tickets-panel .jmt-input {
+  padding: 7px 10px;
+  border: 2px solid #dfe1e6;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #172b4d;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+#jira-my-tickets-panel .jmt-input:focus {
+  border-color: #0052cc;
+}
+
+#jira-my-tickets-panel .jmt-hint {
+  font-size: 11px;
+  color: #6b778c;
+}
+
+/* 토글 스위치 */
+#jira-my-tickets-panel .jmt-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+#jira-my-tickets-panel .jmt-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#jira-my-tickets-panel .jmt-toggle__track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: #dfe1e6;
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+#jira-my-tickets-panel .jmt-toggle__track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+#jira-my-tickets-panel .jmt-toggle input:checked + .jmt-toggle__track {
+  background: #0052cc;
+}
+
+#jira-my-tickets-panel .jmt-toggle input:checked + .jmt-toggle__track::after {
+  transform: translateX(16px);
+}
+
+#jira-my-tickets-panel .jmt-toggle__label {
+  font-size: 13px;
+  color: #172b4d;
+}
+
+#jira-my-tickets-panel .jmt-settings__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#jira-my-tickets-panel .jmt-save-msg {
+  font-size: 12px;
+  min-height: 16px;
+}
+
+#jira-my-tickets-panel .jmt-save-msg--ok {
+  color: #006644;
+}
+
+#jira-my-tickets-panel .jmt-save-msg--err {
+  color: #bf2600;
+}

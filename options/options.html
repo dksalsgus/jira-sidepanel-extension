@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jira My Tickets — 설정</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px;
+      color: #172b4d;
+      background: #f4f5f7;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 40px 16px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      padding: 32px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #0052cc;
+    }
+
+    .subtitle {
+      color: #6b778c;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #6b778c;
+      margin-top: 4px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 8px 12px;
+      border: 2px solid #dfe1e6;
+      border-radius: 4px;
+      font-size: 14px;
+      color: #172b4d;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #0052cc;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn-save {
+      flex: 1;
+      padding: 10px;
+      background: #0052cc;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-save:hover {
+      background: #0065ff;
+    }
+
+    .btn-clear {
+      padding: 10px 20px;
+      background: #fff;
+      color: #de350b;
+      border: 2px solid #de350b;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-clear:hover {
+      background: #ffebe6;
+    }
+
+    .status {
+      margin-top: 16px;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .status--success {
+      background: #e3fcef;
+      color: #006644;
+      border: 1px solid #abf5d1;
+    }
+
+    .status--error {
+      background: #ffebe6;
+      color: #bf2600;
+      border: 1px solid #ffbdad;
+    }
+
+    .api-token-link {
+      color: #0052cc;
+      text-decoration: none;
+    }
+
+    .api-token-link:hover {
+      text-decoration: underline;
+    }
+
+    .form-group--checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 0;
+      border-top: 1px solid #dfe1e6;
+      margin-top: 8px;
+    }
+
+    .form-group--checkbox input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #0052cc;
+    }
+
+    .form-group--checkbox label {
+      margin: 0;
+      font-weight: 400;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Jira My Tickets 설정</h1>
+    <p class="subtitle">Atlassian API Token으로 인증하여 내게 할당된 티켓을 확인하세요.</p>
+
+    <form id="settings-form">
+      <div class="form-group">
+        <label for="domain">Jira 도메인</label>
+        <input
+          type="text"
+          id="domain"
+          placeholder="mycompany"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <p class="hint">예: mycompany → https://mycompany.atlassian.net</p>
+      </div>
+
+      <div class="form-group">
+        <label for="email">이메일</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="you@example.com"
+          autocomplete="email"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="api-token">API Token</label>
+        <input
+          type="password"
+          id="api-token"
+          placeholder="API Token 입력"
+          autocomplete="off"
+        />
+        <p class="hint">
+          <a
+            href="https://id.atlassian.com/manage-profile/security/api-tokens"
+            target="_blank"
+            class="api-token-link"
+          >Atlassian API Token 발급 페이지</a>에서 토큰을 생성하세요.
+        </p>
+      </div>
+
+      <div class="form-group form-group--checkbox">
+        <input type="checkbox" id="auto-open" />
+        <label for="auto-open">Jira 진입 시 패널 자동으로 열기</label>
+      </div>
+
+      <div class="form-group form-group--checkbox">
+        <input type="checkbox" id="show-float-all-sites" />
+        <label for="show-float-all-sites">모든 사이트에서 플로팅 버튼 표시</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="btn-save">저장</button>
+        <button type="button" class="btn-clear" id="btn-clear">초기화</button>
+      </div>
+    </form>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <script src="options.js" type="module"></script>
+</body>
+</html>

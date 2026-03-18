@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Please Be Done</title>
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <div class="header">
+    <h1 class="header__title">Please Be Done</h1>
+    <button class="header__refresh" id="btn-refresh" title="새로고침">↻</button>
+  </div>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn filter-btn--active" id="btn-current" data-filter="current">
+      현재 스프린트
+    </button>
+    <button class="filter-btn" id="btn-all" data-filter="all">
+      전체
+    </button>
+  </div>
+
+  <div class="content" id="content">
+    <!-- 상태에 따라 동적으로 렌더링 -->
+  </div>
+
+  <script src="sidepanel.js" type="module"></script>
+</body>
+</html>

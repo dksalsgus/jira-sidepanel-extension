@@ -26,8 +26,8 @@ function validateEmail(email) {
 }
 
 function validateApiToken(token) {
-  // Atlassian API Token은 보통 ATCT로 시작
-  return token.startsWith('ATCT') && token.length >= 20;
+  // Atlassian API Token: ATCT 또는 ATATT로 시작
+  return (token.startsWith('ATCT') || token.startsWith('ATATT')) && token.length >= 20;
 }
 
 function validateDomain(domain) {

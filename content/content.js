@@ -62,7 +62,7 @@ async function fetchIssues(config, sprintFilter) {
     all: 'assignee = currentUser() ORDER BY updated DESC',
   };
   const jql = jqlMap[sprintFilter] ?? jqlMap.all;
-  const fields = 'summary,status,priority,issuetype';
+  const fields = 'summary,status,priority,issuetype,parent';
   const url = `https://${config.domain}.atlassian.net/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=${fields}&maxResults=50`;
 
   const credentials = btoa(`${config.email}:${config.apiToken}`);
@@ -86,6 +86,10 @@ async function fetchIssues(config, sprintFilter) {
   return res.body.issues.map((raw) => {
     const f = raw.fields;
     const colorName = f.status?.statusCategory?.colorName ?? 'default';
+    const parent = f.parent ? {
+      key: f.parent.key,
+      summary: f.parent.fields?.summary ?? '(제목 없음)'
+    } : null;
     return {
       key: raw.key,
       summary: f.summary ?? '(제목 없음)',
@@ -94,6 +98,7 @@ async function fetchIssues(config, sprintFilter) {
       categoryKey: getCategoryKey(colorName),
       priority: f.priority?.name ?? '',
       priorityIconUrl: f.priority?.iconUrl ?? '',
+      parent,
     };
   });
 }
@@ -188,7 +193,20 @@ function renderIssues() {
     return;
   }
 
-  const items = issues.map((issue) => {
+  const groups = new Map();
+  const independent = [];
+  issues.forEach(issue => {
+    if (issue.parent) {
+      if (!groups.has(issue.parent.key)) {
+        groups.set(issue.parent.key, { parent: issue.parent, children: [] });
+      }
+      groups.get(issue.parent.key).children.push(issue);
+    } else {
+      independent.push(issue);
+    }
+  });
+
+  const generateIssueHtml = (issue) => {
     const badgeClass = getStatusBadgeClass(issue.statusCategory);
     const priorityImg = issue.priorityIconUrl
       ? `<img class="jmt-priority-icon" src="${escapeHtml(issue.priorityIconUrl)}" alt="${escapeHtml(issue.priority)}" />`
@@ -205,16 +223,39 @@ function renderIssues() {
         </div>
       </a>
     `;
-  }).join('');
+  };
+
+  const groupHtml = Array.from(groups.values()).map(group => `
+    <div class="jmt-group">
+      <div class="jmt-group__header">
+        <span class="jmt-group__toggle">▼</span>
+        <span class="jmt-group__key" data-key="${escapeHtml(group.parent.key)}">${escapeHtml(group.parent.key)}</span>
+        <span class="jmt-group__summary">${escapeHtml(group.parent.summary)}</span>
+      </div>
+      <div class="jmt-group__children">
+        ${group.children.map(generateIssueHtml).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  const indepHtml = independent.map(generateIssueHtml).join('');
 
   body.innerHTML = `
     <div class="jmt-issue-count">${issues.length}개의 티켓</div>
-    <div class="jmt-issue-list">${items}</div>
+    <div class="jmt-issue-list">${groupHtml}${indepHtml}</div>
   `;
 
-  body.querySelectorAll('.jmt-issue').forEach((el) => {
+  body.querySelectorAll('.jmt-group__header').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.classList.contains('jmt-group__key')) return;
+      el.parentElement.classList.toggle('is-collapsed');
+    });
+  });
+
+  body.querySelectorAll('.jmt-group__key, .jmt-issue').forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       getConfig().then((config) => {
         if (config) window.open(`https://${config.domain}.atlassian.net/browse/${el.dataset.key}`, '_blank');
       });

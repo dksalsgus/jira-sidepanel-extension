@@ -498,3 +498,69 @@
 #jira-my-tickets-panel .jmt-save-msg--err {
   color: #bf2600;
 }
+
+/* ── 이슈 그룹핑 (부모 티켓 기준) ── */
+#jira-my-tickets-panel .jmt-group {
+  margin-bottom: 8px;
+}
+
+#jira-my-tickets-panel .jmt-group__header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f4f5f7;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #172b4d;
+  user-select: none;
+  margin-bottom: 4px;
+  transition: background 0.2s;
+}
+
+#jira-my-tickets-panel .jmt-group__header:hover {
+  background: #ebecf0;
+}
+
+#jira-my-tickets-panel .jmt-group__toggle {
+  margin-right: 8px;
+  font-size: 10px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+#jira-my-tickets-panel .jmt-group.is-collapsed .jmt-group__toggle {
+  transform: rotate(-90deg);
+}
+
+#jira-my-tickets-panel .jmt-group__key {
+  color: #0052cc;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+#jira-my-tickets-panel .jmt-group__key:hover {
+  text-decoration: underline;
+}
+
+#jira-my-tickets-panel .jmt-group__summary {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  font-weight: 400;
+}
+
+#jira-my-tickets-panel .jmt-group__children {
+  display: flex;
+  flex-direction: column;
+  padding-left: 12px;
+  border-left: 2px solid #ebecf0;
+  margin-left: 20px;
+}
+
+#jira-my-tickets-panel .jmt-group.is-collapsed .jmt-group__children {
+  display: none;
+}
+

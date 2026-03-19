@@ -276,10 +276,34 @@
 }
 
 /* ── 티켓 목록 ── */
-#jira-my-tickets-panel .jmt-issue-count {
+#jira-my-tickets-panel .jmt-issue-count-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 4px 14px 8px;
+}
+
+#jira-my-tickets-panel .jmt-issue-count {
   font-size: 11px;
   color: #6b778c;
+}
+
+#jira-my-tickets-panel .jmt-issue-controls {
+  display: flex;
+  gap: 8px;
+}
+
+#jira-my-tickets-panel .jmt-issue-control-btn {
+  background: none;
+  border: none;
+  color: #0052cc;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+}
+
+#jira-my-tickets-panel .jmt-issue-control-btn:hover {
+  text-decoration: underline;
 }
 
 #jira-my-tickets-panel .jmt-issue {

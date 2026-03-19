@@ -241,9 +241,28 @@ function renderIssues() {
   const indepHtml = independent.map(generateIssueHtml).join('');
 
   body.innerHTML = `
-    <div class="jmt-issue-count">${issues.length}개의 티켓</div>
+    <div class="jmt-issue-count-bar">
+      <span class="jmt-issue-count">${issues.length}개의 티켓</span>
+      <div class="jmt-issue-controls">
+        <button class="jmt-issue-control-btn" id="jmt-btn-expand-all">모두 펼치기</button>
+        <button class="jmt-issue-control-btn" id="jmt-btn-collapse-all">모두 접기</button>
+      </div>
+    </div>
     <div class="jmt-issue-list">${groupHtml}${indepHtml}</div>
   `;
+
+  const btnExpandAll = body.querySelector('#jmt-btn-expand-all');
+  const btnCollapseAll = body.querySelector('#jmt-btn-collapse-all');
+  if (btnExpandAll) {
+    btnExpandAll.addEventListener('click', () => {
+      body.querySelectorAll('.jmt-group').forEach(el => el.classList.remove('is-collapsed'));
+    });
+  }
+  if (btnCollapseAll) {
+    btnCollapseAll.addEventListener('click', () => {
+      body.querySelectorAll('.jmt-group').forEach(el => el.classList.add('is-collapsed'));
+    });
+  }
 
   body.querySelectorAll('.jmt-group__header').forEach(el => {
     el.addEventListener('click', (e) => {

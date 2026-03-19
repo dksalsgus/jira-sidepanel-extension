@@ -279,3 +279,69 @@ body {
   height: 12px;
   flex-shrink: 0;
 }
+
+/* ── 이슈 그룹핑 (부모 티켓 기준) ── */
+.issue-group {
+  margin-bottom: 8px;
+}
+
+.issue-group__header {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f4f5f7;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #172b4d;
+  user-select: none;
+  margin: 0 10px 4px 10px;
+  transition: background 0.2s;
+}
+
+.issue-group__header:hover {
+  background: #ebecf0;
+}
+
+.issue-group__toggle {
+  margin-right: 8px;
+  font-size: 10px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+
+.issue-group.is-collapsed .issue-group__toggle {
+  transform: rotate(-90deg);
+}
+
+.issue-group__key {
+  color: #0052cc;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.issue-group__key:hover {
+  text-decoration: underline;
+}
+
+.issue-group__summary {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-grow: 1;
+  font-weight: 400;
+}
+
+.issue-group__children {
+  display: flex;
+  flex-direction: column;
+  padding-left: 12px;
+  border-left: 2px solid #ebecf0;
+  margin-left: 20px;
+}
+
+.issue-group.is-collapsed .issue-group__children {
+  display: none;
+}
+

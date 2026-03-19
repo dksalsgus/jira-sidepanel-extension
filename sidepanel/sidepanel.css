@@ -174,10 +174,34 @@ body {
 }
 
 /* ── 티켓 목록 ── */
-.issue-count {
+.issue-count-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 4px 14px 8px;
+}
+
+.issue-count {
   font-size: 11px;
   color: #6b778c;
+}
+
+.issue-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.issue-control-btn {
+  background: none;
+  border: none;
+  color: #0052cc;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.issue-control-btn:hover {
+  text-decoration: underline;
 }
 
 .issue-list {

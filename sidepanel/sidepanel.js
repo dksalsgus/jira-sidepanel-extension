@@ -134,9 +134,29 @@ function renderIssues(issues) {
   const indepHtml = independent.map(generateIssueHtml).join('');
 
   contentEl.innerHTML = `
-    <div class="issue-count">${issues.length}개의 티켓</div>
+    <div class="issue-count-bar">
+      <span class="issue-count">${issues.length}개의 티켓</span>
+      <div class="issue-controls">
+        <button class="issue-control-btn" id="btn-expand-all">모두 펼치기</button>
+        <button class="issue-control-btn" id="btn-collapse-all">모두 접기</button>
+      </div>
+    </div>
     <div class="issue-list">${groupHtml}${indepHtml}</div>
   `;
+
+  // 전체 펼치기 / 접기 이벤트
+  const btnExpandAll = contentEl.querySelector('#btn-expand-all');
+  const btnCollapseAll = contentEl.querySelector('#btn-collapse-all');
+  if (btnExpandAll) {
+    btnExpandAll.addEventListener('click', () => {
+      contentEl.querySelectorAll('.issue-group').forEach(el => el.classList.remove('is-collapsed'));
+    });
+  }
+  if (btnCollapseAll) {
+    btnCollapseAll.addEventListener('click', () => {
+      contentEl.querySelectorAll('.issue-group').forEach(el => el.classList.add('is-collapsed'));
+    });
+  }
 
   // 토글 이벤트
   contentEl.querySelectorAll('.issue-group__header').forEach(el => {

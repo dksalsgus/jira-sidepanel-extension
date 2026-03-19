@@ -35,7 +35,7 @@ export async function fetchMyself(config) {
  */
 export async function fetchAssignedIssues(config, sprintFilter) {
   const jql = buildJql(sprintFilter);
-  const fields = 'summary,status,priority,issuetype';
+  const fields = 'summary,status,priority,issuetype,parent';
   const url = `https://${config.domain}.atlassian.net/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=${fields}&maxResults=${MAX_RESULTS}`;
 
   const response = await fetch(url, {
@@ -67,6 +67,10 @@ function buildHeaders(config) {
 function normalizeIssue(raw) {
   const fields = raw.fields;
   const statusCategory = fields.status?.statusCategory?.colorName ?? 'default';
+  const parent = fields.parent ? {
+    key: fields.parent.key,
+    summary: fields.parent.fields?.summary ?? '(제목 없음)'
+  } : null;
   return {
     key: raw.key,
     summary: fields.summary ?? '(제목 없음)',
@@ -76,6 +80,7 @@ function normalizeIssue(raw) {
     priorityIconUrl: fields.priority?.iconUrl ?? '',
     issueType: fields.issuetype?.name ?? '',
     issueTypeIconUrl: fields.issuetype?.iconUrl ?? '',
+    parent,
   };
 }
 

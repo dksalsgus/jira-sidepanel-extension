@@ -3,7 +3,7 @@ import { getConfig } from '../utils/storage.js';
 import { fetchAssignedIssues, ApiError } from '../utils/api.js';
 
 // 상태: 'loading' | 'unconfigured' | 'error' | 'loaded'
-let currentFilter = 'current'; // 'current' | 'all'
+let currentFilter = 'all'; // 'current' | 'all'
 let isLoading = false;
 
 const contentEl = document.getElementById('content');

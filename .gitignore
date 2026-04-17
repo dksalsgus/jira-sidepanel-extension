@@ -4,9 +4,14 @@
 # macOS
 .DS_Store
 
+# 빌드
+node_modules/
+dist/
+
 # 스크린샷 및 홍보 이미지
 screenshots/
 promotional/
 
 # Claude 관련
 .claude/settings.local.json
+.omx/

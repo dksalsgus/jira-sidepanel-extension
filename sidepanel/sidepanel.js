@@ -1,8 +1,10 @@
 // sidepanel/sidepanel.js — Side Panel 메인 로직
 import { getConfig } from '../utils/storage.js';
 import { fetchAssignedIssues, ApiError } from '../utils/api.js';
+import { escapeHtml } from '../shared/escape-html.js';
+import { groupIssues } from '../shared/issue-grouping.js';
+import { generateIssueListHtml, SIDEPANEL_CLASS_CONFIG as CLS } from '../shared/issue-renderer.js';
 
-// 상태: 'loading' | 'unconfigured' | 'error' | 'loaded'
 let currentFilter = 'all'; // 'current' | 'all'
 let isLoading = false;
 
@@ -72,102 +74,33 @@ function renderEmpty() {
 function renderIssues(issues) {
   filterBar.style.display = 'flex';
 
-  const groups = new Map();
-  const independent = [];
-
-  issues.forEach(issue => {
-    if (issue.parent) {
-      if (!groups.has(issue.parent.key)) {
-        groups.set(issue.parent.key, {
-          parent: issue.parent,
-          children: []
-        });
-      }
-      groups.get(issue.parent.key).children.push(issue);
-    } else {
-      independent.push(issue);
-    }
-  });
-
-  const generateIssueHtml = (issue) => {
-    const badgeClass = getStatusBadgeClass(issue.statusCategory);
-    const priorityImg = issue.priorityIconUrl
-      ? `<img class="issue-item__priority" src="${escapeHtml(issue.priorityIconUrl)}" alt="${escapeHtml(issue.priority)}" />`
-      : '<span class="issue-item__priority"></span>';
-    const issueTypeImg = issue.issueTypeIconUrl
-      ? `<img class="issue-type-icon" src="${escapeHtml(issue.issueTypeIconUrl)}" alt="${escapeHtml(issue.issueType)}" />`
-      : '';
-
-    return `
-      <a
-        class="issue-item"
-        href="#"
-        data-key="${escapeHtml(issue.key)}"
-        title="${escapeHtml(issue.summary)}"
-      >
-        ${priorityImg}
-        <div class="issue-item__body">
-          <div class="issue-item__key">${escapeHtml(issue.key)}</div>
-          <div class="issue-item__summary">${escapeHtml(issue.summary)}</div>
-          <div class="issue-item__meta">
-            <span class="status-badge status-badge--${badgeClass}">${escapeHtml(issue.status)}</span>
-            ${issueTypeImg}
-          </div>
-        </div>
-      </a>
-    `;
-  };
-
-  const groupHtml = Array.from(groups.values()).map(group => `
-    <div class="issue-group">
-      <div class="issue-group__header">
-        <span class="issue-group__toggle">▼</span>
-        <span class="issue-group__key" data-key="${escapeHtml(group.parent.key)}">${escapeHtml(group.parent.key)}</span>
-        <span class="issue-group__summary">${escapeHtml(group.parent.summary)}</span>
-      </div>
-      <div class="issue-group__children">
-        ${group.children.map(generateIssueHtml).join('')}
-      </div>
-    </div>
-  `).join('');
-
-  const indepHtml = independent.map(generateIssueHtml).join('');
-
-  contentEl.innerHTML = `
-    <div class="issue-count-bar">
-      <span class="issue-count">${issues.length}개의 티켓</span>
-      <div class="issue-controls">
-        <button class="issue-control-btn" id="btn-expand-all">모두 펼치기</button>
-        <button class="issue-control-btn" id="btn-collapse-all">모두 접기</button>
-      </div>
-    </div>
-    <div class="issue-list">${groupHtml}${indepHtml}</div>
-  `;
+  const { groups, independent } = groupIssues(issues);
+  contentEl.innerHTML = generateIssueListHtml(issues, groups, independent, CLS);
 
   // 전체 펼치기 / 접기 이벤트
-  const btnExpandAll = contentEl.querySelector('#btn-expand-all');
-  const btnCollapseAll = contentEl.querySelector('#btn-collapse-all');
+  const btnExpandAll = contentEl.querySelector(`#${CLS.btnExpandAll}`);
+  const btnCollapseAll = contentEl.querySelector(`#${CLS.btnCollapseAll}`);
   if (btnExpandAll) {
     btnExpandAll.addEventListener('click', () => {
-      contentEl.querySelectorAll('.issue-group').forEach(el => el.classList.remove('is-collapsed'));
+      contentEl.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.remove('is-collapsed'));
     });
   }
   if (btnCollapseAll) {
     btnCollapseAll.addEventListener('click', () => {
-      contentEl.querySelectorAll('.issue-group').forEach(el => el.classList.add('is-collapsed'));
+      contentEl.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.add('is-collapsed'));
     });
   }
 
   // 토글 이벤트
-  contentEl.querySelectorAll('.issue-group__header').forEach(el => {
+  contentEl.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => {
     el.addEventListener('click', (e) => {
-      if (e.target.classList.contains('issue-group__key')) return;
+      if (e.target.classList.contains(CLS.groupKey)) return;
       el.parentElement.classList.toggle('is-collapsed');
     });
   });
 
   // 티켓 및 부모 키 클릭 시 새 탭으로 열기
-  contentEl.querySelectorAll('.issue-group__key, .issue-item').forEach((el) => {
+  contentEl.querySelectorAll(`.${CLS.groupKey}, .${CLS.issue}`).forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -179,24 +112,6 @@ function renderIssues(issues) {
       });
     });
   });
-}
-
-function getStatusBadgeClass(colorName) {
-  const map = {
-    'blue-grey': 'blue-grey',
-    'yellow': 'yellow',
-    'green': 'green',
-  };
-  return map[colorName] ?? 'default';
-}
-
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
 
 async function loadIssues() {

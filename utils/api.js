@@ -12,41 +12,26 @@ const MAX_RESULTS = 50;
 /**
  * 인증 검증 — /rest/api/3/myself 호출
  * @param {Config} config
+ * @param {{transport?: (url: string, headers: Record<string, string>) => Promise<any>}} [options]
  * @returns {Promise<{accountId: string, displayName: string}>}
  */
-export async function fetchMyself(config) {
+export async function fetchMyself(config, options = {}) {
   const url = `https://${config.domain}.atlassian.net/rest/api/3/myself`;
-  const response = await fetch(url, {
-    headers: buildHeaders(config),
-  });
-
-  if (!response.ok) {
-    throw new ApiError(response.status, await getErrorMessage(response));
-  }
-
-  return response.json();
+  return requestJson(url, buildHeaders(config), options.transport);
 }
 
 /**
  * 내게 할당된 이슈 조회
  * @param {Config} config
  * @param {'current' | 'all'} sprintFilter
+ * @param {{transport?: (url: string, headers: Record<string, string>) => Promise<any>}} [options]
  * @returns {Promise<Issue[]>}
  */
-export async function fetchAssignedIssues(config, sprintFilter) {
+export async function fetchAssignedIssues(config, sprintFilter, options = {}) {
   const jql = buildJql(sprintFilter);
   const fields = 'summary,status,priority,issuetype,parent';
   const url = `https://${config.domain}.atlassian.net/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=${fields}&maxResults=${MAX_RESULTS}`;
-
-  const response = await fetch(url, {
-    headers: buildHeaders(config),
-  });
-
-  if (!response.ok) {
-    throw new ApiError(response.status, await getErrorMessage(response));
-  }
-
-  const data = await response.json();
+  const data = await requestJson(url, buildHeaders(config), options.transport);
   return data.issues.map(normalizeIssue);
 }
 
@@ -62,6 +47,20 @@ function buildHeaders(config) {
     'Authorization': buildAuthHeader(config.email, config.apiToken),
     'Accept': 'application/json',
   };
+}
+
+async function requestJson(url, headers, transport = fetchJsonDirect) {
+  return transport(url, headers);
+}
+
+async function fetchJsonDirect(url, headers) {
+  const response = await fetch(url, { headers });
+
+  if (!response.ok) {
+    throw new ApiError(response.status, await getErrorMessage(response));
+  }
+
+  return response.json();
 }
 
 function normalizeIssue(raw) {

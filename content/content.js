@@ -1,4 +1,10 @@
 // content/content.js — Jira 페이지에 플로팅 패널 주입
+import { getConfig } from '../utils/storage.js';
+import { fetchAssignedIssues, ApiError } from '../utils/api.js';
+import { escapeHtml } from '../shared/escape-html.js';
+import { getCategoryKey } from '../shared/status-utils.js';
+import { groupIssues } from '../shared/issue-grouping.js';
+import { generateIssueListHtml, CONTENT_CLASS_CONFIG as CLS } from '../shared/issue-renderer.js';
 
 const PANEL_ID = 'jira-my-tickets-panel';
 const TOGGLE_BTN_ID = 'jira-my-tickets-toggle';
@@ -9,97 +15,31 @@ let currentView = 'tickets';         // 'tickets' | 'settings'
 let isLoading = false;
 let allIssues = [];
 
-// ── 유틸 ───────────────────────────────────────────────────
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+async function fetchViaBackground(url, headers) {
+  const response = await chrome.runtime.sendMessage({
+    type: 'FETCH_JIRA',
+    url,
+    headers,
+  });
 
-function getStatusBadgeClass(colorName) {
-  const map = { 'blue-grey': 'blue-grey', yellow: 'yellow', green: 'green' };
-  return map[colorName] ?? 'default';
-}
+  if (response?.error) {
+    throw new ApiError(response.status ?? 0, response.error);
+  }
 
-function getCategoryKey(colorName) {
-  if (colorName === 'yellow') return 'inprogress';
-  if (colorName === 'green') return 'done';
-  return 'todo';
+  if (!response?.ok) {
+    const message = response?.body?.errorMessages?.[0]
+      ?? response?.body?.message
+      ?? `HTTP ${response?.status ?? 0}`;
+    throw new ApiError(response?.status ?? 0, message);
+  }
+
+  return response.body ?? {};
 }
 
 // ── 스토리지 ────────────────────────────────────────────────
-function getConfig() {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(['domain', 'email', 'apiToken'], (result) => {
-      if (!result.domain || !result.email || !result.apiToken) {
-        resolve(null);
-      } else {
-        resolve({ domain: result.domain, email: result.email, apiToken: result.apiToken });
-      }
-    });
-  });
-}
-
 function getPrefs() {
   return new Promise((resolve) => {
     chrome.storage.sync.get(['autoOpen', 'showFloatOnAllSites'], resolve);
-  });
-}
-
-function savePrefs(prefs) {
-  return new Promise((resolve) => {
-    chrome.storage.sync.set(prefs, resolve);
-  });
-}
-
-// ── API ─────────────────────────────────────────────────────
-async function fetchIssues(config, sprintFilter) {
-  const jqlMap = {
-    current: 'assignee = currentUser() AND sprint in openSprints() ORDER BY priority DESC',
-    all: 'assignee = currentUser() ORDER BY updated DESC',
-  };
-  const jql = jqlMap[sprintFilter] ?? jqlMap.all;
-  const fields = 'summary,status,priority,issuetype,parent';
-  const url = `https://${config.domain}.atlassian.net/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=${fields}&maxResults=50`;
-
-  const credentials = btoa(`${config.email}:${config.apiToken}`);
-  const res = await new Promise((resolve) => {
-    chrome.runtime.sendMessage({
-      type: 'FETCH_JIRA',
-      url,
-      headers: { Authorization: `Basic ${credentials}`, Accept: 'application/json' },
-    }, resolve);
-  });
-
-  if (res?.error) {
-    throw { status: 0, message: res.error };
-  }
-
-  if (!res?.ok) {
-    const msg = res.body?.errorMessages?.[0] ?? res.body?.message ?? `HTTP ${res.status}`;
-    throw { status: res.status, message: msg };
-  }
-
-  return res.body.issues.map((raw) => {
-    const f = raw.fields;
-    const colorName = f.status?.statusCategory?.colorName ?? 'default';
-    const parent = f.parent ? {
-      key: f.parent.key,
-      summary: f.parent.fields?.summary ?? '(제목 없음)'
-    } : null;
-    return {
-      key: raw.key,
-      summary: f.summary ?? '(제목 없음)',
-      status: f.status?.name ?? '',
-      statusCategory: colorName,
-      categoryKey: getCategoryKey(colorName),
-      priority: f.priority?.name ?? '',
-      priorityIconUrl: f.priority?.iconUrl ?? '',
-      parent,
-    };
   });
 }
 
@@ -193,85 +133,31 @@ function renderIssues() {
     return;
   }
 
-  const groups = new Map();
-  const independent = [];
-  issues.forEach(issue => {
-    if (issue.parent) {
-      if (!groups.has(issue.parent.key)) {
-        groups.set(issue.parent.key, { parent: issue.parent, children: [] });
-      }
-      groups.get(issue.parent.key).children.push(issue);
-    } else {
-      independent.push(issue);
-    }
-  });
+  const { groups, independent } = groupIssues(issues);
+  body.innerHTML = generateIssueListHtml(issues, groups, independent, CLS);
 
-  const generateIssueHtml = (issue) => {
-    const badgeClass = getStatusBadgeClass(issue.statusCategory);
-    const priorityImg = issue.priorityIconUrl
-      ? `<img class="jmt-priority-icon" src="${escapeHtml(issue.priorityIconUrl)}" alt="${escapeHtml(issue.priority)}" />`
-      : '<span class="jmt-priority-icon"></span>';
-    return `
-      <a class="jmt-issue" href="#" data-key="${escapeHtml(issue.key)}" title="${escapeHtml(issue.summary)}">
-        ${priorityImg}
-        <div class="jmt-issue__body">
-          <div class="jmt-issue__key">${escapeHtml(issue.key)}</div>
-          <div class="jmt-issue__summary">${escapeHtml(issue.summary)}</div>
-          <div class="jmt-issue__meta">
-            <span class="jmt-badge jmt-badge--${badgeClass}">${escapeHtml(issue.status)}</span>
-          </div>
-        </div>
-      </a>
-    `;
-  };
-
-  const groupHtml = Array.from(groups.values()).map(group => `
-    <div class="jmt-group">
-      <div class="jmt-group__header">
-        <span class="jmt-group__toggle">▼</span>
-        <span class="jmt-group__key" data-key="${escapeHtml(group.parent.key)}">${escapeHtml(group.parent.key)}</span>
-        <span class="jmt-group__summary">${escapeHtml(group.parent.summary)}</span>
-      </div>
-      <div class="jmt-group__children">
-        ${group.children.map(generateIssueHtml).join('')}
-      </div>
-    </div>
-  `).join('');
-
-  const indepHtml = independent.map(generateIssueHtml).join('');
-
-  body.innerHTML = `
-    <div class="jmt-issue-count-bar">
-      <span class="jmt-issue-count">${issues.length}개의 티켓</span>
-      <div class="jmt-issue-controls">
-        <button class="jmt-issue-control-btn" id="jmt-btn-expand-all">모두 펼치기</button>
-        <button class="jmt-issue-control-btn" id="jmt-btn-collapse-all">모두 접기</button>
-      </div>
-    </div>
-    <div class="jmt-issue-list">${groupHtml}${indepHtml}</div>
-  `;
-
-  const btnExpandAll = body.querySelector('#jmt-btn-expand-all');
-  const btnCollapseAll = body.querySelector('#jmt-btn-collapse-all');
+  // 펼치기/접기 이벤트
+  const btnExpandAll = body.querySelector(`#${CLS.btnExpandAll}`);
+  const btnCollapseAll = body.querySelector(`#${CLS.btnCollapseAll}`);
   if (btnExpandAll) {
     btnExpandAll.addEventListener('click', () => {
-      body.querySelectorAll('.jmt-group').forEach(el => el.classList.remove('is-collapsed'));
+      body.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.remove('is-collapsed'));
     });
   }
   if (btnCollapseAll) {
     btnCollapseAll.addEventListener('click', () => {
-      body.querySelectorAll('.jmt-group').forEach(el => el.classList.add('is-collapsed'));
+      body.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.add('is-collapsed'));
     });
   }
 
-  body.querySelectorAll('.jmt-group__header').forEach(el => {
+  body.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => {
     el.addEventListener('click', (e) => {
-      if (e.target.classList.contains('jmt-group__key')) return;
+      if (e.target.classList.contains(CLS.groupKey)) return;
       el.parentElement.classList.toggle('is-collapsed');
     });
   });
 
-  body.querySelectorAll('.jmt-group__key, .jmt-issue').forEach((el) => {
+  body.querySelectorAll(`.${CLS.groupKey}, .${CLS.issue}`).forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -403,15 +289,25 @@ async function loadIssues() {
   }
 
   try {
-    allIssues = await fetchIssues(config, currentSprintFilter);
+    const issues = await fetchAssignedIssues(config, currentSprintFilter, {
+      transport: fetchViaBackground,
+    });
+    allIssues = issues.map(issue => ({
+      ...issue,
+      categoryKey: getCategoryKey(issue.statusCategory),
+    }));
     renderIssues();
   } catch (err) {
-    if (err.status === 401 || err.status === 403) {
-      renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
-    } else if (err.status === 429) {
-      renderError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', false);
+    if (err instanceof ApiError) {
+      if (err.status === 401 || err.status === 403) {
+        renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
+      } else if (err.status === 429) {
+        renderError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', false);
+      } else {
+        renderError(`API 오류 (${err.status}): ${err.message}`, false);
+      }
     } else {
-      renderError(`API 오류 (${err.status ?? ''}): ${err.message ?? '알 수 없는 오류'}`, false);
+      renderError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', false);
     }
   } finally {
     isLoading = false;

@@ -12,13 +12,18 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
 
   if (msg.type === 'FETCH_JIRA') {
     fetch(msg.url, { headers: msg.headers })
-      .then(async (res) => {
-        const body = await res.json().catch(() => ({}));
-        sendResponse({ ok: res.ok, status: res.status, body });
+      .then(async (response) => {
+        const body = await response.json().catch(() => ({}));
+        sendResponse({ ok: response.ok, status: response.status, body });
       })
-      .catch((err) => {
-        sendResponse({ ok: false, status: 0, body: {}, error: err.message });
+      .catch((error) => {
+        sendResponse({
+          ok: false,
+          status: 0,
+          body: {},
+          error: error instanceof Error ? error.message : String(error),
+        });
       });
-    return true; // 비동기 sendResponse 유지
+    return true;
   }
 });

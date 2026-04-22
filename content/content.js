@@ -9,7 +9,7 @@ import { generateIssueListHtml, CONTENT_CLASS_CONFIG as CLS } from '../shared/is
 const PANEL_ID = 'jira-my-tickets-panel';
 const TOGGLE_BTN_ID = 'jira-my-tickets-toggle';
 
-let currentSprintFilter = 'current'; // 'current' | 'all'
+let currentSprintFilter = 'all'; // 'current' | 'all'
 let currentStatusFilter = 'all';     // 'all' | 'todo' | 'inprogress' | 'done'
 let currentView = 'tickets';         // 'tickets' | 'settings'
 let isLoading = false;
@@ -331,8 +331,8 @@ function createPanel() {
     </div>
 
     <div class="jmt-filter-bar jmt-sprint-bar" style="display:none">
-      <button class="jmt-sprint-btn jmt-sprint-btn--active" data-sprint="current">현재 스프린트</button>
-      <button class="jmt-sprint-btn" data-sprint="all">전체</button>
+      <button class="jmt-sprint-btn jmt-sprint-btn--active" data-sprint="all">전체</button>
+      <button class="jmt-sprint-btn" data-sprint="current">현재 스프린트</button>
     </div>
 
     <div class="jmt-filter-bar jmt-status-bar" style="display:none">

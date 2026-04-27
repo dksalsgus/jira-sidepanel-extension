@@ -5,6 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jira My Tickets — 설정</title>
   <style>
+    :root {
+      --jmt-bg-primary: #ffffff;
+      --jmt-bg-secondary: #f7f7f8;
+      --jmt-bg-tertiary: #eeeeef;
+      --jmt-bg-hover: #f3f3f5;
+      --jmt-text-primary: #1a1a2e;
+      --jmt-text-secondary: #6b7280;
+      --jmt-text-tertiary: #9ca3af;
+      --jmt-text-accent: #5b5fc7;
+      --jmt-accent: #5b5fc7;
+      --jmt-accent-hover: #4f53b5;
+      --jmt-accent-subtle: #eef0ff;
+      --jmt-border: #e5e5e6;
+      --jmt-border-light: #f0f0f1;
+      --jmt-border-focus: #5b5fc7;
+      --jmt-danger: #ef4444;
+      --jmt-danger-subtle: #fef2f2;
+      --jmt-danger-border: #fecaca;
+      --jmt-success: #10b981;
+      --jmt-success-bg: #ecfdf5;
+      --jmt-success-border: #a7f3d0;
+      --jmt-shadow-sm: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.02);
+      --jmt-radius-sm: 4px;
+      --jmt-radius-md: 6px;
+      --jmt-radius-lg: 8px;
+      --jmt-radius-xl: 12px;
+      --jmt-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+      --jmt-transition-fast: 0.12s ease;
+      --jmt-transition-base: 0.2s ease;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -12,10 +43,10 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: var(--jmt-font-sans);
       font-size: 14px;
-      color: #172b4d;
-      background: #f4f5f7;
+      color: var(--jmt-text-primary);
+      background: var(--jmt-bg-secondary);
       min-height: 100vh;
       display: flex;
       align-items: flex-start;
@@ -24,9 +55,10 @@
     }
 
     .container {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      background: var(--jmt-bg-primary);
+      border-radius: var(--jmt-radius-xl);
+      box-shadow: var(--jmt-shadow-sm);
+      border: 1px solid var(--jmt-border-light);
       padding: 32px;
       width: 100%;
       max-width: 480px;
@@ -34,13 +66,14 @@
 
     h1 {
       font-size: 20px;
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 8px;
-      color: #0052cc;
+      color: var(--jmt-text-accent);
+      letter-spacing: -0.3px;
     }
 
     .subtitle {
-      color: #6b778c;
+      color: var(--jmt-text-secondary);
       margin-bottom: 28px;
       line-height: 1.5;
     }
@@ -53,11 +86,12 @@
       display: block;
       font-weight: 500;
       margin-bottom: 6px;
+      color: var(--jmt-text-primary);
     }
 
     .hint {
       font-size: 12px;
-      color: #6b778c;
+      color: var(--jmt-text-tertiary);
       margin-top: 4px;
     }
 
@@ -66,16 +100,18 @@
     input[type="password"] {
       width: 100%;
       padding: 8px 12px;
-      border: 2px solid #dfe1e6;
-      border-radius: 4px;
+      border: 1px solid var(--jmt-border);
+      border-radius: var(--jmt-radius-md);
       font-size: 14px;
-      color: #172b4d;
-      transition: border-color 0.15s;
+      color: var(--jmt-text-primary);
+      transition: border-color var(--jmt-transition-fast), box-shadow var(--jmt-transition-fast);
       outline: none;
+      font-family: var(--jmt-font-sans);
     }
 
     input:focus {
-      border-color: #0052cc;
+      border-color: var(--jmt-border-focus);
+      box-shadow: 0 0 0 3px rgba(91, 95, 199, 0.1);
     }
 
     .actions {
@@ -87,64 +123,66 @@
     .btn-save {
       flex: 1;
       padding: 10px;
-      background: #0052cc;
+      background: var(--jmt-accent);
       color: #fff;
       border: none;
-      border-radius: 4px;
+      border-radius: var(--jmt-radius-lg);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background var(--jmt-transition-fast);
+      font-family: var(--jmt-font-sans);
     }
 
     .btn-save:hover {
-      background: #0065ff;
+      background: var(--jmt-accent-hover);
     }
 
     .btn-clear {
       padding: 10px 20px;
-      background: #fff;
-      color: #de350b;
-      border: 2px solid #de350b;
-      border-radius: 4px;
+      background: var(--jmt-bg-primary);
+      color: var(--jmt-danger);
+      border: 1px solid var(--jmt-danger-border);
+      border-radius: var(--jmt-radius-lg);
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background var(--jmt-transition-fast);
+      font-family: var(--jmt-font-sans);
     }
 
     .btn-clear:hover {
-      background: #ffebe6;
+      background: var(--jmt-danger-subtle);
     }
 
     .status {
       margin-top: 16px;
       padding: 10px 14px;
-      border-radius: 4px;
+      border-radius: var(--jmt-radius-md);
       font-size: 13px;
       display: none;
     }
 
     .status--success {
-      background: #e3fcef;
-      color: #006644;
-      border: 1px solid #abf5d1;
+      background: var(--jmt-success-bg);
+      color: #065f46;
+      border: 1px solid var(--jmt-success-border);
     }
 
     .status--error {
-      background: #ffebe6;
-      color: #bf2600;
-      border: 1px solid #ffbdad;
+      background: var(--jmt-danger-subtle);
+      color: #991b1b;
+      border: 1px solid var(--jmt-danger-border);
     }
 
     .status--info {
-      background: #deebff;
-      color: #0747a6;
-      border: 1px solid #b3d4ff;
+      background: var(--jmt-accent-subtle);
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
     }
 
     .api-token-link {
-      color: #0052cc;
+      color: var(--jmt-text-accent);
       text-decoration: none;
     }
 
@@ -157,7 +195,7 @@
       align-items: center;
       gap: 10px;
       padding: 14px 0;
-      border-top: 1px solid #dfe1e6;
+      border-top: 1px solid var(--jmt-border-light);
       margin-top: 8px;
     }
 
@@ -165,7 +203,7 @@
       width: 16px;
       height: 16px;
       cursor: pointer;
-      accent-color: #0052cc;
+      accent-color: var(--jmt-accent);
     }
 
     .form-group--checkbox label {

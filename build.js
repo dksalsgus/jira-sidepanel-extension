@@ -29,6 +29,7 @@ const buildConfig = {
 function copyStaticFiles() {
   const files = [
     ['manifest.json', 'manifest.json'],
+    ['shared/design-tokens.css', 'shared/design-tokens.css'],
     ['content/content.css', 'content/content.css'],
     ['sidepanel/sidepanel.html', 'sidepanel/sidepanel.html'],
     ['sidepanel/sidepanel.css', 'sidepanel/sidepanel.css'],

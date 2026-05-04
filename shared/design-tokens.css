@@ -1,55 +1,55 @@
-/* design-tokens.css — 모던 미니멀 디자인 토큰 */
+/* design-tokens.css — Apple-inspired design tokens */
 
 :root {
-  /* ── Neutral ── */
+  /* ── Surface ── */
   --jmt-bg-primary: #ffffff;
-  --jmt-bg-secondary: #f7f7f8;
-  --jmt-bg-tertiary: #eeeeef;
-  --jmt-bg-hover: #f3f3f5;
-  --jmt-bg-active: #eaeaee;
+  --jmt-bg-secondary: #f5f5f7;
+  --jmt-bg-tertiary: #ededf0;
+  --jmt-bg-hover: rgba(0, 0, 0, 0.03);
+  --jmt-bg-active: rgba(0, 0, 0, 0.06);
 
   /* ── Text ── */
-  --jmt-text-primary: #1a1a2e;
-  --jmt-text-secondary: #6b7280;
-  --jmt-text-tertiary: #9ca3af;
-  --jmt-text-accent: #5b5fc7;
+  --jmt-text-primary: #1d1d1f;
+  --jmt-text-secondary: #7a7a7a;
+  --jmt-text-tertiary: #999999;
+  --jmt-text-accent: #0066cc;
 
-  /* ── Accent (Primary) ── */
-  --jmt-accent: #5b5fc7;
-  --jmt-accent-hover: #4f53b5;
-  --jmt-accent-subtle: #eef0ff;
-  --jmt-accent-text: #5b5fc7;
+  /* ── Accent (Action Blue) ── */
+  --jmt-accent: #0066cc;
+  --jmt-accent-hover: #0055b3;
+  --jmt-accent-subtle: #e8f0fe;
+  --jmt-accent-text: #0066cc;
 
   /* ── Status ── */
-  --jmt-status-todo: #9ca3af;
-  --jmt-status-todo-bg: #f3f4f6;
-  --jmt-status-progress: #f59e0b;
-  --jmt-status-progress-bg: #fffbeb;
-  --jmt-status-done: #10b981;
-  --jmt-status-done-bg: #ecfdf5;
+  --jmt-status-todo: #7a7a7a;
+  --jmt-status-todo-bg: #f0f0f0;
+  --jmt-status-progress: #946800;
+  --jmt-status-progress-bg: #fff8e6;
+  --jmt-status-done: #1a7a3a;
+  --jmt-status-done-bg: #eafaf0;
 
   /* ── Danger ── */
-  --jmt-danger: #ef4444;
-  --jmt-danger-hover: #dc2626;
+  --jmt-danger: #d42b2b;
+  --jmt-danger-hover: #b82424;
   --jmt-danger-subtle: #fef2f2;
   --jmt-danger-border: #fecaca;
 
   /* ── Success ── */
-  --jmt-success: #10b981;
-  --jmt-success-bg: #ecfdf5;
+  --jmt-success: #1a7a3a;
+  --jmt-success-bg: #eafaf0;
   --jmt-success-border: #a7f3d0;
 
-  /* ── Border ── */
-  --jmt-border: #e5e5e6;
-  --jmt-border-light: #f0f0f1;
-  --jmt-border-focus: #5b5fc7;
+  /* ── Border / Hairline ── */
+  --jmt-border: #e0e0e0;
+  --jmt-border-light: #f0f0f0;
+  --jmt-border-focus: #0071e3;
 
-  /* ── Shadow ── */
-  --jmt-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
-  --jmt-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --jmt-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --jmt-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --jmt-shadow-panel: -2px 0 20px rgba(0, 0, 0, 0.08);
+  /* ── Shadow (minimal) ── */
+  --jmt-shadow-xs: none;
+  --jmt-shadow-sm: none;
+  --jmt-shadow-md: none;
+  --jmt-shadow-lg: none;
+  --jmt-shadow-panel: -1px 0 0 var(--jmt-border);
 
   /* ── Spacing ── */
   --jmt-space-0_5: 2px;
@@ -63,14 +63,14 @@
   --jmt-space-10: 40px;
 
   /* ── Radius ── */
-  --jmt-radius-sm: 4px;
-  --jmt-radius-md: 6px;
-  --jmt-radius-lg: 8px;
-  --jmt-radius-xl: 12px;
+  --jmt-radius-sm: 8px;
+  --jmt-radius-md: 10px;
+  --jmt-radius-lg: 12px;
+  --jmt-radius-xl: 18px;
   --jmt-radius-full: 9999px;
 
   /* ── Typography ── */
-  --jmt-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  --jmt-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
   --jmt-text-xs: 11px;
   --jmt-text-sm: 12px;
   --jmt-text-base: 13px;

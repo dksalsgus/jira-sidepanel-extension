@@ -1,41 +1,41 @@
-/* content.css — 플로팅 패널 모던 미니멀 스타일 */
+/* content.css — Apple-inspired floating panel */
 
-/* ── 디자인 토큰 (인라인) ── */
+/* ── Design Tokens ── */
 :root {
   --jmt-bg-primary: #ffffff;
-  --jmt-bg-secondary: #f7f7f8;
-  --jmt-bg-tertiary: #eeeeef;
-  --jmt-bg-hover: #f3f3f5;
-  --jmt-bg-active: #eaeaee;
-  --jmt-text-primary: #1a1a2e;
-  --jmt-text-secondary: #6b7280;
-  --jmt-text-tertiary: #9ca3af;
-  --jmt-text-accent: #5b5fc7;
-  --jmt-accent: #5b5fc7;
-  --jmt-accent-hover: #4f53b5;
-  --jmt-accent-subtle: #eef0ff;
-  --jmt-accent-text: #5b5fc7;
-  --jmt-status-todo: #9ca3af;
-  --jmt-status-todo-bg: #f3f4f6;
-  --jmt-status-progress: #f59e0b;
-  --jmt-status-progress-bg: #fffbeb;
-  --jmt-status-done: #10b981;
-  --jmt-status-done-bg: #ecfdf5;
-  --jmt-danger: #ef4444;
-  --jmt-danger-hover: #dc2626;
+  --jmt-bg-secondary: #f5f5f7;
+  --jmt-bg-tertiary: #ededf0;
+  --jmt-bg-hover: rgba(0, 0, 0, 0.03);
+  --jmt-bg-active: rgba(0, 0, 0, 0.06);
+  --jmt-text-primary: #1d1d1f;
+  --jmt-text-secondary: #7a7a7a;
+  --jmt-text-tertiary: #999999;
+  --jmt-text-accent: #0066cc;
+  --jmt-accent: #0066cc;
+  --jmt-accent-hover: #0055b3;
+  --jmt-accent-subtle: #e8f0fe;
+  --jmt-accent-text: #0066cc;
+  --jmt-status-todo: #7a7a7a;
+  --jmt-status-todo-bg: #f0f0f0;
+  --jmt-status-progress: #946800;
+  --jmt-status-progress-bg: #fff8e6;
+  --jmt-status-done: #1a7a3a;
+  --jmt-status-done-bg: #eafaf0;
+  --jmt-danger: #d42b2b;
+  --jmt-danger-hover: #b82424;
   --jmt-danger-subtle: #fef2f2;
   --jmt-danger-border: #fecaca;
-  --jmt-success: #10b981;
-  --jmt-success-bg: #ecfdf5;
+  --jmt-success: #1a7a3a;
+  --jmt-success-bg: #eafaf0;
   --jmt-success-border: #a7f3d0;
-  --jmt-border: #e5e5e6;
-  --jmt-border-light: #f0f0f1;
-  --jmt-border-focus: #5b5fc7;
-  --jmt-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
-  --jmt-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
-  --jmt-shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --jmt-shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08);
-  --jmt-shadow-panel: -2px 0 20px rgba(0, 0, 0, 0.08);
+  --jmt-border: #e0e0e0;
+  --jmt-border-light: #f0f0f0;
+  --jmt-border-focus: #0071e3;
+  --jmt-shadow-xs: none;
+  --jmt-shadow-sm: none;
+  --jmt-shadow-md: none;
+  --jmt-shadow-lg: none;
+  --jmt-shadow-panel: -1px 0 0 var(--jmt-border);
   --jmt-space-0_5: 2px;
   --jmt-space-1: 4px;
   --jmt-space-2: 8px;
@@ -45,12 +45,12 @@
   --jmt-space-6: 24px;
   --jmt-space-8: 32px;
   --jmt-space-10: 40px;
-  --jmt-radius-sm: 4px;
-  --jmt-radius-md: 6px;
-  --jmt-radius-lg: 8px;
-  --jmt-radius-xl: 12px;
+  --jmt-radius-sm: 8px;
+  --jmt-radius-md: 10px;
+  --jmt-radius-lg: 12px;
+  --jmt-radius-xl: 18px;
   --jmt-radius-full: 9999px;
-  --jmt-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  --jmt-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
   --jmt-text-xs: 11px;
   --jmt-text-sm: 12px;
   --jmt-text-base: 13px;
@@ -63,41 +63,51 @@
   --jmt-panel-width: 340px;
 }
 
-/* ── 토글 버튼 ── */
+/* ── Toggle Button ── */
 #jira-my-tickets-toggle {
   position: fixed;
   bottom: 80px;
   right: 0;
   z-index: 2147483646;
-  width: 36px;
-  height: 36px;
-  background: var(--jmt-accent);
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 0, 0, 0.56);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  backdrop-filter: saturate(180%) blur(10px);
   border: none;
-  border-radius: var(--jmt-radius-lg) 0 0 var(--jmt-radius-lg);
+  border-radius: 10px 0 0 10px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--jmt-shadow-md);
-  transition: background var(--jmt-transition-fast), width var(--jmt-transition-fast), box-shadow var(--jmt-transition-base);
+  transition: background var(--jmt-transition-fast), width var(--jmt-transition-fast);
   padding: 0;
 }
 
 #jira-my-tickets-toggle:hover {
-  background: var(--jmt-accent-hover);
-  width: 40px;
-  box-shadow: var(--jmt-shadow-lg);
+  background: rgba(0, 0, 0, 0.72);
+  width: 48px;
+}
+
+#jira-my-tickets-toggle:active {
+  transform: scale(0.95);
+}
+
+#jira-my-tickets-toggle:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: -2px;
 }
 
 #jira-my-tickets-toggle span {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 14px;
+  font-weight: 600;
   color: #fff;
   font-family: var(--jmt-font-sans);
   line-height: 1;
+  letter-spacing: -0.2px;
 }
 
-/* ── 패널 ── */
+/* ── Panel ── */
 #jira-my-tickets-panel {
   position: fixed;
   top: 0;
@@ -114,33 +124,35 @@
   font-size: var(--jmt-text-base);
   color: var(--jmt-text-primary);
   transition: right var(--jmt-transition-smooth);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #jira-my-tickets-panel.jmt-panel--open {
   right: 0;
 }
 
-/* ── 헤더 ── */
+/* ── Header ── */
 #jira-my-tickets-panel .jmt-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: var(--jmt-space-3) var(--jmt-space-4);
   background: var(--jmt-bg-primary);
-  border-bottom: 1px solid var(--jmt-border);
+  border-bottom: 1px solid var(--jmt-border-light);
   flex-shrink: 0;
 }
 
 #jira-my-tickets-panel .jmt-header__title {
   font-size: var(--jmt-text-lg);
-  font-weight: 700;
+  font-weight: 600;
   color: var(--jmt-text-primary);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
 }
 
 #jira-my-tickets-panel .jmt-header__actions {
   display: flex;
-  gap: var(--jmt-space-1);
+  gap: 0;
 }
 
 #jira-my-tickets-panel .jmt-btn-settings--active {
@@ -148,24 +160,7 @@
   color: var(--jmt-accent);
 }
 
-#jira-my-tickets-panel .jmt-btn-back {
-  background: transparent;
-  border: none;
-  color: var(--jmt-text-secondary);
-  font-size: 16px;
-  cursor: pointer;
-  padding: var(--jmt-space-0_5) var(--jmt-space-2);
-  border-radius: var(--jmt-radius-sm);
-  line-height: 1;
-  transition: background var(--jmt-transition-fast), color var(--jmt-transition-fast);
-  margin-right: var(--jmt-space-1);
-}
-
-#jira-my-tickets-panel .jmt-btn-back:hover {
-  background: var(--jmt-bg-hover);
-  color: var(--jmt-text-primary);
-}
-
+#jira-my-tickets-panel .jmt-btn-back,
 #jira-my-tickets-panel .jmt-btn-refresh,
 #jira-my-tickets-panel .jmt-btn-settings,
 #jira-my-tickets-panel .jmt-btn-close {
@@ -174,12 +169,18 @@
   color: var(--jmt-text-secondary);
   font-size: 15px;
   cursor: pointer;
-  padding: var(--jmt-space-0_5) var(--jmt-space-2);
+  padding: var(--jmt-space-2);
   border-radius: var(--jmt-radius-sm);
   line-height: 1;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: background var(--jmt-transition-fast), color var(--jmt-transition-fast);
 }
 
+#jira-my-tickets-panel .jmt-btn-back:hover,
 #jira-my-tickets-panel .jmt-btn-refresh:hover,
 #jira-my-tickets-panel .jmt-btn-settings:hover,
 #jira-my-tickets-panel .jmt-btn-close:hover {
@@ -187,12 +188,27 @@
   color: var(--jmt-text-primary);
 }
 
+#jira-my-tickets-panel .jmt-btn-back:active,
+#jira-my-tickets-panel .jmt-btn-refresh:active,
+#jira-my-tickets-panel .jmt-btn-settings:active,
+#jira-my-tickets-panel .jmt-btn-close:active {
+  transform: scale(0.95);
+}
+
+#jira-my-tickets-panel .jmt-btn-back:focus-visible,
+#jira-my-tickets-panel .jmt-btn-refresh:focus-visible,
+#jira-my-tickets-panel .jmt-btn-settings:focus-visible,
+#jira-my-tickets-panel .jmt-btn-close:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: -2px;
+}
+
 #jira-my-tickets-panel .jmt-btn-refresh:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
 
-/* ── 필터 바 공통 ── */
+/* ── Filter Bar ── */
 #jira-my-tickets-panel .jmt-filter-bar {
   display: flex;
   gap: var(--jmt-space-1);
@@ -208,19 +224,21 @@
   display: none;
 }
 
-/* ── 스프린트 필터 (Pill 버튼) ── */
+/* ── Sprint Filter (Pill) ── */
 #jira-my-tickets-panel .jmt-sprint-btn {
-  padding: var(--jmt-space-1) var(--jmt-space-3);
+  padding: 6px var(--jmt-space-3);
   border: 1px solid var(--jmt-border);
   border-radius: var(--jmt-radius-full);
   background: var(--jmt-bg-primary);
   color: var(--jmt-text-secondary);
   font-size: var(--jmt-text-xs);
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--jmt-transition-fast);
   font-family: var(--jmt-font-sans);
+  min-height: 32px;
+  letter-spacing: -0.01px;
 }
 
 #jira-my-tickets-panel .jmt-sprint-btn--active {
@@ -233,19 +251,28 @@
 #jira-my-tickets-panel .jmt-sprint-btn:hover:not(.jmt-sprint-btn--active) {
   background: var(--jmt-bg-hover);
   color: var(--jmt-text-primary);
-  border-color: var(--jmt-text-tertiary);
+  border-color: var(--jmt-border);
 }
 
-/* ── 상태 필터 (Pill 버튼) ── */
+#jira-my-tickets-panel .jmt-sprint-btn:active {
+  transform: scale(0.95);
+}
+
+#jira-my-tickets-panel .jmt-sprint-btn:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: 1px;
+}
+
+/* ── Status Filter ── */
 #jira-my-tickets-panel .jmt-status-btn {
   flex: 1;
-  padding: var(--jmt-space-1) var(--jmt-space-1);
+  padding: var(--jmt-space-1);
   border: 1px solid var(--jmt-border);
-  border-radius: var(--jmt-radius-md);
+  border-radius: var(--jmt-radius-sm);
   background: var(--jmt-bg-primary);
   color: var(--jmt-text-secondary);
   font-size: var(--jmt-text-xs);
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   white-space: nowrap;
   transition: all var(--jmt-transition-fast);
@@ -254,6 +281,9 @@
   align-items: center;
   gap: 1px;
   font-family: var(--jmt-font-sans);
+  min-height: 44px;
+  justify-content: center;
+  letter-spacing: -0.01px;
 }
 
 #jira-my-tickets-panel .jmt-status-btn--active {
@@ -268,20 +298,29 @@
   color: var(--jmt-text-primary);
 }
 
+#jira-my-tickets-panel .jmt-status-btn:active {
+  transform: scale(0.95);
+}
+
+#jira-my-tickets-panel .jmt-status-btn:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: 1px;
+}
+
 #jira-my-tickets-panel .jmt-status-btn__count {
   font-size: var(--jmt-text-base);
-  font-weight: 700;
+  font-weight: 600;
   color: inherit;
 }
 
-/* ── 바디 ── */
+/* ── Body ── */
 #jira-my-tickets-panel .jmt-body {
   flex: 1;
   overflow-y: auto;
   padding: var(--jmt-space-2) 0;
 }
 
-/* ── 로딩 ── */
+/* ── Loading ── */
 #jira-my-tickets-panel .jmt-loading {
   display: flex;
   flex-direction: column;
@@ -296,7 +335,7 @@
 #jira-my-tickets-panel .jmt-spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid var(--jmt-border);
+  border: 2px solid var(--jmt-border-light);
   border-top-color: var(--jmt-accent);
   border-radius: 50%;
   animation: jmt-spin 0.6s linear infinite;
@@ -306,7 +345,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* ── 빈 상태 ── */
+/* ── Empty State ── */
 #jira-my-tickets-panel .jmt-empty {
   display: flex;
   flex-direction: column;
@@ -327,33 +366,44 @@
   font-size: var(--jmt-text-md);
   font-weight: 600;
   color: var(--jmt-text-primary);
+  letter-spacing: -0.15px;
 }
 
 #jira-my-tickets-panel .jmt-empty__desc {
   font-size: var(--jmt-text-sm);
-  line-height: 1.6;
+  line-height: 1.5;
   max-width: 220px;
 }
 
 #jira-my-tickets-panel .jmt-btn-primary {
-  margin-top: var(--jmt-space-2);
-  padding: var(--jmt-space-2) var(--jmt-space-5);
+  margin-top: var(--jmt-space-3);
+  padding: 11px 22px;
   background: var(--jmt-accent);
   color: #fff;
   border: none;
-  border-radius: var(--jmt-radius-lg);
+  border-radius: var(--jmt-radius-full);
   font-size: var(--jmt-text-sm);
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
   transition: background var(--jmt-transition-fast);
   font-family: var(--jmt-font-sans);
+  min-height: 44px;
 }
 
 #jira-my-tickets-panel .jmt-btn-primary:hover {
   background: var(--jmt-accent-hover);
 }
 
-/* ── 티켓 목록 ── */
+#jira-my-tickets-panel .jmt-btn-primary:active {
+  transform: scale(0.95);
+}
+
+#jira-my-tickets-panel .jmt-btn-primary:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: 2px;
+}
+
+/* ── Ticket List ── */
 #jira-my-tickets-panel .jmt-issue-count-bar {
   display: flex;
   justify-content: space-between;
@@ -364,7 +414,8 @@
 #jira-my-tickets-panel .jmt-issue-count {
   font-size: var(--jmt-text-xs);
   color: var(--jmt-text-tertiary);
-  font-weight: 500;
+  font-weight: 400;
+  letter-spacing: -0.01px;
 }
 
 #jira-my-tickets-panel .jmt-issue-controls {
@@ -386,13 +437,19 @@
   text-decoration: underline;
 }
 
+#jira-my-tickets-panel .jmt-issue-control-btn:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 #jira-my-tickets-panel .jmt-issue {
   display: flex;
   align-items: flex-start;
   gap: var(--jmt-space-2);
   padding: var(--jmt-space-2) var(--jmt-space-3);
   margin: 0 var(--jmt-space-2);
-  border-radius: var(--jmt-radius-md);
+  border-radius: var(--jmt-radius-sm);
   cursor: pointer;
   transition: background var(--jmt-transition-fast);
   text-decoration: none;
@@ -401,15 +458,19 @@
 }
 
 #jira-my-tickets-panel .jmt-issue:hover {
-  background: var(--jmt-bg-secondary);
-  border-color: var(--jmt-border-light);
+  background: var(--jmt-bg-hover);
+}
+
+#jira-my-tickets-panel .jmt-issue:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: -2px;
 }
 
 #jira-my-tickets-panel .jmt-priority-icon {
   flex-shrink: 0;
   width: 16px;
   height: 16px;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 #jira-my-tickets-panel .jmt-issue__body {
@@ -421,18 +482,19 @@
   font-size: var(--jmt-text-xs);
   font-weight: 600;
   color: var(--jmt-text-accent);
-  letter-spacing: 0.2px;
+  letter-spacing: -0.01px;
 }
 
 #jira-my-tickets-panel .jmt-issue__summary {
   font-size: var(--jmt-text-sm);
-  line-height: 1.4;
+  line-height: 1.45;
   color: var(--jmt-text-primary);
   margin-top: 1px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  letter-spacing: -0.01px;
 }
 
 #jira-my-tickets-panel .jmt-issue__meta {
@@ -449,7 +511,7 @@
   border-radius: var(--jmt-radius-full);
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -461,12 +523,12 @@
 
 #jira-my-tickets-panel .jmt-badge--yellow {
   background: var(--jmt-status-progress-bg);
-  color: #92400e;
+  color: var(--jmt-status-progress);
 }
 
 #jira-my-tickets-panel .jmt-badge--green {
   background: var(--jmt-status-done-bg);
-  color: #065f46;
+  color: var(--jmt-status-done);
 }
 
 #jira-my-tickets-panel .jmt-badge--default {
@@ -474,7 +536,7 @@
   color: var(--jmt-text-secondary);
 }
 
-/* ── 설정 뷰 ── */
+/* ── Settings View ── */
 #jira-my-tickets-panel .jmt-settings {
   padding: var(--jmt-space-4) var(--jmt-space-3);
   display: flex;
@@ -490,9 +552,9 @@
 
 #jira-my-tickets-panel .jmt-settings__title {
   font-size: var(--jmt-text-xs);
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.1px;
   color: var(--jmt-text-tertiary);
   padding-bottom: var(--jmt-space-1);
 }
@@ -512,18 +574,20 @@
 #jira-my-tickets-panel .jmt-input {
   padding: var(--jmt-space-2) var(--jmt-space-3);
   border: 1px solid var(--jmt-border);
-  border-radius: var(--jmt-radius-md);
+  border-radius: var(--jmt-radius-sm);
   font-size: var(--jmt-text-base);
   color: var(--jmt-text-primary);
   background: var(--jmt-bg-primary);
   outline: none;
   transition: border-color var(--jmt-transition-fast), box-shadow var(--jmt-transition-fast);
   font-family: var(--jmt-font-sans);
+  min-height: 44px;
+  letter-spacing: -0.01px;
 }
 
 #jira-my-tickets-panel .jmt-input:focus {
   border-color: var(--jmt-border-focus);
-  box-shadow: 0 0 0 3px rgba(91, 95, 199, 0.1);
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.12);
 }
 
 #jira-my-tickets-panel .jmt-hint {
@@ -531,13 +595,14 @@
   color: var(--jmt-text-tertiary);
 }
 
-/* 토글 스위치 */
+/* ── Toggle Switch ── */
 #jira-my-tickets-panel .jmt-toggle {
   display: flex;
   align-items: center;
   gap: var(--jmt-space-2);
   cursor: pointer;
   user-select: none;
+  min-height: 44px;
 }
 
 #jira-my-tickets-panel .jmt-toggle input[type="checkbox"] {
@@ -549,8 +614,8 @@
 
 #jira-my-tickets-panel .jmt-toggle__track {
   position: relative;
-  width: 36px;
-  height: 20px;
+  width: 44px;
+  height: 26px;
   background: var(--jmt-border);
   border-radius: var(--jmt-radius-full);
   flex-shrink: 0;
@@ -562,12 +627,11 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
   background: #fff;
   border-radius: 50%;
   transition: transform var(--jmt-transition-base);
-  box-shadow: var(--jmt-shadow-xs);
 }
 
 #jira-my-tickets-panel .jmt-toggle input:checked + .jmt-toggle__track {
@@ -575,12 +639,17 @@
 }
 
 #jira-my-tickets-panel .jmt-toggle input:checked + .jmt-toggle__track::after {
-  transform: translateX(16px);
+  transform: translateX(18px);
 }
 
 #jira-my-tickets-panel .jmt-toggle__label {
   font-size: var(--jmt-text-sm);
   color: var(--jmt-text-primary);
+}
+
+#jira-my-tickets-panel .jmt-toggle input:focus-visible + .jmt-toggle__track {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: 2px;
 }
 
 #jira-my-tickets-panel .jmt-settings__actions {
@@ -602,7 +671,7 @@
   color: var(--jmt-danger);
 }
 
-/* ── 이슈 그룹핑 ── */
+/* ── Issue Grouping ── */
 #jira-my-tickets-panel .jmt-group {
   margin-bottom: var(--jmt-space-1);
 }
@@ -613,7 +682,7 @@
   padding: var(--jmt-space-2) var(--jmt-space-3);
   margin: 0 var(--jmt-space-2);
   background: var(--jmt-bg-secondary);
-  border-radius: var(--jmt-radius-md);
+  border-radius: var(--jmt-radius-sm);
   cursor: pointer;
   font-size: var(--jmt-text-sm);
   font-weight: 500;
@@ -621,10 +690,16 @@
   user-select: none;
   margin-bottom: var(--jmt-space-1);
   transition: background var(--jmt-transition-fast);
+  letter-spacing: -0.01px;
 }
 
 #jira-my-tickets-panel .jmt-group__header:hover {
   background: var(--jmt-bg-tertiary);
+}
+
+#jira-my-tickets-panel .jmt-group__header:focus-visible {
+  outline: 2px solid var(--jmt-border-focus);
+  outline-offset: -2px;
 }
 
 #jira-my-tickets-panel .jmt-group__toggle {
@@ -663,7 +738,7 @@
   display: flex;
   flex-direction: column;
   padding-left: var(--jmt-space-3);
-  border-left: 2px solid var(--jmt-accent-subtle);
+  border-left: 2px solid var(--jmt-border-light);
   margin-left: 20px;
 }
 

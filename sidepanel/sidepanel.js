@@ -15,6 +15,27 @@ const btnRefresh = document.getElementById('btn-refresh');
 const btnCurrent = document.getElementById('btn-current');
 const btnAll = document.getElementById('btn-all');
 
+async function fetchViaBackground(url, headers) {
+  const response = await chrome.runtime.sendMessage({
+    type: 'FETCH_JIRA',
+    url,
+    headers,
+  });
+
+  if (response?.error) {
+    throw new ApiError(response.status ?? 0, response.error);
+  }
+
+  if (!response?.ok) {
+    const message = response?.body?.errorMessages?.[0]
+      ?? response?.body?.message
+      ?? `HTTP ${response?.status ?? 0}`;
+    throw new ApiError(response?.status ?? 0, message);
+  }
+
+  return response.body ?? {};
+}
+
 function renderLoading() {
   filterBar.style.display = 'none';
   contentEl.innerHTML = `
@@ -153,7 +174,9 @@ async function loadIssues() {
   }
 
   try {
-    const issues = await fetchAssignedIssues(config, currentFilter);
+    const issues = await fetchAssignedIssues(config, currentFilter, {
+      transport: fetchViaBackground,
+    });
     await writeIssueCache(currentFilter, issues);
     if (issues.length === 0) {
       renderEmpty();
@@ -165,7 +188,7 @@ async function loadIssues() {
       renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
     } else if (cachedEntry) {
       if (cachedEntry.issues.length === 0) {
-        renderEmpty(cachedEntry, 'stale');
+        renderError('최신 티켓을 불러오지 못했습니다. 설정과 네트워크를 확인한 뒤 다시 시도해주세요.', false);
       } else {
         renderIssues(cachedEntry.issues, cachedEntry, 'stale');
       }

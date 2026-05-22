@@ -320,6 +320,17 @@
   padding: var(--jmt-space-2) 0;
 }
 
+#jira-my-tickets-panel .jmt-cache-notice {
+  margin: 0 var(--jmt-space-3) var(--jmt-space-2);
+  padding: var(--jmt-space-2) var(--jmt-space-3);
+  border: 1px solid var(--jmt-border-light);
+  border-radius: var(--jmt-radius-sm);
+  background: var(--jmt-bg-secondary);
+  color: var(--jmt-text-secondary);
+  font-size: var(--jmt-text-xs);
+  line-height: 1.4;
+}
+
 /* ── Loading ── */
 #jira-my-tickets-panel .jmt-loading {
   display: flex;

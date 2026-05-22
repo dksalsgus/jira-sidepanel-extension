@@ -4,6 +4,7 @@ import { fetchAssignedIssues, ApiError } from '../utils/api.js';
 import { escapeHtml } from '../shared/escape-html.js';
 import { groupIssues } from '../shared/issue-grouping.js';
 import { generateIssueListHtml, SIDEPANEL_CLASS_CONFIG as CLS } from '../shared/issue-renderer.js';
+import { getIssueCacheAgeLabel, readIssueCache, writeIssueCache } from '../shared/issue-cache.js';
 
 let currentFilter = 'all'; // 'current' | 'all'
 let isLoading = false;
@@ -58,9 +59,19 @@ function renderError(message, isAuthError) {
   }
 }
 
-function renderEmpty() {
+function getCacheNoticeHtml(cacheEntry, state) {
+  if (!cacheEntry) return '';
+  const age = getIssueCacheAgeLabel(cacheEntry.cachedAt);
+  const message = state === 'stale'
+    ? `최신 조회에 실패해 ${age} 데이터를 표시합니다.`
+    : `${age} 데이터를 표시하는 중입니다.`;
+  return `<div class="cache-notice">${escapeHtml(message)}</div>`;
+}
+
+function renderEmpty(cacheEntry = null, state = null) {
   filterBar.style.display = 'flex';
   contentEl.innerHTML = `
+    ${getCacheNoticeHtml(cacheEntry, state)}
     <div class="empty-state">
       <div class="empty-state__icon">✅</div>
       <div class="empty-state__title">할당된 티켓이 없습니다</div>
@@ -71,11 +82,14 @@ function renderEmpty() {
   `;
 }
 
-function renderIssues(issues) {
+function renderIssues(issues, cacheEntry = null, state = null) {
   filterBar.style.display = 'flex';
 
   const { groups, independent } = groupIssues(issues);
-  contentEl.innerHTML = generateIssueListHtml(issues, groups, independent, CLS);
+  contentEl.innerHTML = `
+    ${getCacheNoticeHtml(cacheEntry, state)}
+    ${generateIssueListHtml(issues, groups, independent, CLS)}
+  `;
 
   // 전체 펼치기 / 접기 이벤트
   const btnExpandAll = contentEl.querySelector(`#${CLS.btnExpandAll}`);
@@ -119,8 +133,6 @@ async function loadIssues() {
   isLoading = true;
   btnRefresh.disabled = true;
 
-  renderLoading();
-
   const config = await getConfig();
   if (!config) {
     isLoading = false;
@@ -129,18 +141,36 @@ async function loadIssues() {
     return;
   }
 
+  const cachedEntry = await readIssueCache(currentFilter);
+  if (cachedEntry) {
+    if (cachedEntry.issues.length === 0) {
+      renderEmpty(cachedEntry, 'refreshing');
+    } else {
+      renderIssues(cachedEntry.issues, cachedEntry, 'refreshing');
+    }
+  } else {
+    renderLoading();
+  }
+
   try {
     const issues = await fetchAssignedIssues(config, currentFilter);
+    await writeIssueCache(currentFilter, issues);
     if (issues.length === 0) {
       renderEmpty();
     } else {
       renderIssues(issues);
     }
   } catch (err) {
-    if (err instanceof ApiError) {
-      if (err.status === 401 || err.status === 403) {
-        renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
-      } else if (err.status === 429) {
+    if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+      renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
+    } else if (cachedEntry) {
+      if (cachedEntry.issues.length === 0) {
+        renderEmpty(cachedEntry, 'stale');
+      } else {
+        renderIssues(cachedEntry.issues, cachedEntry, 'stale');
+      }
+    } else if (err instanceof ApiError) {
+      if (err.status === 429) {
         renderError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', false);
       } else {
         renderError(`API 오류 (${err.status}): ${err.message}`, false);

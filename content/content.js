@@ -5,6 +5,7 @@ import { escapeHtml } from '../shared/escape-html.js';
 import { getCategoryKey } from '../shared/status-utils.js';
 import { groupIssues } from '../shared/issue-grouping.js';
 import { generateIssueListHtml, CONTENT_CLASS_CONFIG as CLS } from '../shared/issue-renderer.js';
+import { getIssueCacheAgeLabel, readIssueCache, writeIssueCache } from '../shared/issue-cache.js';
 
 const PANEL_ID = 'jira-my-tickets-panel';
 const TOGGLE_BTN_ID = 'jira-my-tickets-toggle';
@@ -96,9 +97,25 @@ function renderError(message, isAuth) {
   }
 }
 
+function getCacheNoticeHtml(cacheEntry, state) {
+  if (!cacheEntry) return '';
+  const age = getIssueCacheAgeLabel(cacheEntry.cachedAt);
+  const message = state === 'stale'
+    ? `최신 조회에 실패해 ${age} 데이터를 표시합니다.`
+    : `${age} 데이터를 표시하는 중입니다.`;
+  return `<div class="jmt-cache-notice">${escapeHtml(message)}</div>`;
+}
+
 function getFilteredIssues() {
   if (currentStatusFilter === 'all') return allIssues;
   return allIssues.filter((i) => i.categoryKey === currentStatusFilter);
+}
+
+function withCategoryKey(issue) {
+  return {
+    ...issue,
+    categoryKey: issue.categoryKey ?? getCategoryKey(issue.statusCategory),
+  };
 }
 
 function updateStatusFilterCounts() {
@@ -115,7 +132,7 @@ function updateStatusFilterCounts() {
   });
 }
 
-function renderIssues() {
+function renderIssues(cacheEntry = null, state = null) {
   setFilterBarVisible(true);
   updateStatusFilterCounts();
 
@@ -124,6 +141,7 @@ function renderIssues() {
 
   if (issues.length === 0) {
     body.innerHTML = `
+      ${getCacheNoticeHtml(cacheEntry, state)}
       <div class="jmt-empty">
         <div class="jmt-empty__icon">✅</div>
         <div class="jmt-empty__title">티켓이 없습니다</div>
@@ -134,7 +152,10 @@ function renderIssues() {
   }
 
   const { groups, independent } = groupIssues(issues);
-  body.innerHTML = generateIssueListHtml(issues, groups, independent, CLS);
+  body.innerHTML = `
+    ${getCacheNoticeHtml(cacheEntry, state)}
+    ${generateIssueListHtml(issues, groups, independent, CLS)}
+  `;
 
   // 펼치기/접기 이벤트
   const btnExpandAll = body.querySelector(`#${CLS.btnExpandAll}`);
@@ -278,8 +299,6 @@ async function loadIssues() {
   const btnRefresh = panel.querySelector('.jmt-btn-refresh');
   if (btnRefresh) btnRefresh.disabled = true;
 
-  renderLoading();
-
   const config = await getConfig();
   if (!config) {
     isLoading = false;
@@ -288,20 +307,29 @@ async function loadIssues() {
     return;
   }
 
+  const cachedEntry = await readIssueCache(currentSprintFilter);
+  if (cachedEntry) {
+    allIssues = cachedEntry.issues.map(withCategoryKey);
+    renderIssues(cachedEntry, 'refreshing');
+  } else {
+    renderLoading();
+  }
+
   try {
     const issues = await fetchAssignedIssues(config, currentSprintFilter, {
       transport: fetchViaBackground,
     });
-    allIssues = issues.map(issue => ({
-      ...issue,
-      categoryKey: getCategoryKey(issue.statusCategory),
-    }));
+    allIssues = issues.map(withCategoryKey);
+    await writeIssueCache(currentSprintFilter, allIssues);
     renderIssues();
   } catch (err) {
-    if (err instanceof ApiError) {
-      if (err.status === 401 || err.status === 403) {
-        renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
-      } else if (err.status === 429) {
+    if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+      renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
+    } else if (cachedEntry) {
+      allIssues = cachedEntry.issues.map(withCategoryKey);
+      renderIssues(cachedEntry, 'stale');
+    } else if (err instanceof ApiError) {
+      if (err.status === 429) {
         renderError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', false);
       } else {
         renderError(`API 오류 (${err.status}): ${err.message}`, false);

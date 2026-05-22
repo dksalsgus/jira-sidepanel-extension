@@ -7,6 +7,7 @@
   --jmt-bg-tertiary: #ededf0;
   --jmt-bg-hover: rgba(0, 0, 0, 0.03);
   --jmt-bg-active: rgba(0, 0, 0, 0.06);
+  --jmt-surface-pearl: #fafafc;
   --jmt-text-primary: #1d1d1f;
   --jmt-text-secondary: #7a7a7a;
   --jmt-text-tertiary: #999999;
@@ -324,11 +325,11 @@
   margin: 0 var(--jmt-space-3) var(--jmt-space-2);
   padding: var(--jmt-space-2) var(--jmt-space-3);
   border: 1px solid var(--jmt-border-light);
-  border-radius: var(--jmt-radius-sm);
-  background: var(--jmt-bg-secondary);
+  border-radius: var(--jmt-radius-md);
+  background: var(--jmt-surface-pearl);
   color: var(--jmt-text-secondary);
   font-size: var(--jmt-text-xs);
-  line-height: 1.4;
+  line-height: 1.43;
 }
 
 /* ── Loading ── */
@@ -583,9 +584,9 @@
 }
 
 #jira-my-tickets-panel .jmt-input {
-  padding: var(--jmt-space-2) var(--jmt-space-3);
+  padding: var(--jmt-space-2) var(--jmt-space-5);
   border: 1px solid var(--jmt-border);
-  border-radius: var(--jmt-radius-sm);
+  border-radius: var(--jmt-radius-full);
   font-size: var(--jmt-text-base);
   color: var(--jmt-text-primary);
   background: var(--jmt-bg-primary);

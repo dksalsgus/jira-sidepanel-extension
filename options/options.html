@@ -17,6 +17,7 @@
       --jmt-accent: #0066cc;
       --jmt-accent-hover: #0055b3;
       --jmt-accent-subtle: #e8f0fe;
+      --jmt-surface-pearl: #fafafc;
       --jmt-border: #e0e0e0;
       --jmt-border-light: #f0f0f0;
       --jmt-border-focus: #0071e3;
@@ -27,7 +28,7 @@
       --jmt-success-bg: #eafaf0;
       --jmt-success-border: #a7f3d0;
       --jmt-radius-sm: 8px;
-      --jmt-radius-md: 10px;
+      --jmt-radius-md: 11px;
       --jmt-radius-lg: 12px;
       --jmt-radius-xl: 18px;
       --jmt-radius-full: 9999px;
@@ -46,7 +47,7 @@
       font-family: var(--jmt-font-sans);
       font-size: 14px;
       color: var(--jmt-text-primary);
-      background: var(--jmt-bg-secondary);
+      background: var(--jmt-bg-primary);
       min-height: 100vh;
       display: flex;
       align-items: flex-start;
@@ -58,8 +59,8 @@
 
     .container {
       background: var(--jmt-bg-primary);
-      border-radius: var(--jmt-radius-xl);
-      border: 1px solid var(--jmt-border);
+      border-radius: 0;
+      border: 1px solid var(--jmt-border-light);
       padding: 32px;
       width: 100%;
       max-width: 480px;
@@ -105,9 +106,9 @@
     input[type="email"],
     input[type="password"] {
       width: 100%;
-      padding: 0 12px;
+      padding: 0 20px;
       border: 1px solid var(--jmt-border);
-      border-radius: var(--jmt-radius-sm);
+      border-radius: var(--jmt-radius-full);
       font-size: 14px;
       color: var(--jmt-text-primary);
       transition: border-color var(--jmt-transition-fast), box-shadow var(--jmt-transition-fast);
@@ -160,8 +161,8 @@
     .btn-clear {
       padding: 0 20px;
       background: var(--jmt-bg-primary);
-      color: var(--jmt-danger);
-      border: 1px solid var(--jmt-danger-border);
+      color: var(--jmt-text-accent);
+      border: 1px solid var(--jmt-accent);
       border-radius: var(--jmt-radius-full);
       font-size: 14px;
       font-weight: 400;
@@ -173,7 +174,7 @@
     }
 
     .btn-clear:hover {
-      background: var(--jmt-danger-subtle);
+      background: var(--jmt-accent-subtle);
     }
 
     .btn-clear:active {
@@ -188,16 +189,17 @@
     .status {
       margin-top: 16px;
       padding: 12px 14px;
-      border-radius: var(--jmt-radius-sm);
+      border-radius: var(--jmt-radius-md);
       font-size: 13px;
       display: none;
       letter-spacing: -0.1px;
+      line-height: 1.43;
     }
 
     .status--success {
-      background: var(--jmt-success-bg);
-      color: var(--jmt-success);
-      border: 1px solid var(--jmt-success-border);
+      background: var(--jmt-surface-pearl);
+      color: var(--jmt-text-secondary);
+      border: 1px solid var(--jmt-border-light);
     }
 
     .status--error {

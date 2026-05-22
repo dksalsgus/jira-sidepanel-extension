@@ -6,9 +6,11 @@
 export function groupIssues(issues) {
   const groups = new Map();
   const independent = [];
+  const parentKeys = new Set();
 
   issues.forEach(issue => {
     if (issue.parent) {
+      parentKeys.add(issue.parent.key);
       if (!groups.has(issue.parent.key)) {
         groups.set(issue.parent.key, { parent: issue.parent, children: [] });
       }
@@ -18,5 +20,8 @@ export function groupIssues(issues) {
     }
   });
 
-  return { groups, independent };
+  return {
+    groups,
+    independent: independent.filter(issue => !parentKeys.has(issue.key)),
+  };
 }

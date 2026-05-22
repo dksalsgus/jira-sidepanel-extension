@@ -1,6 +1,6 @@
 // sidepanel/sidepanel.js — Side Panel 메인 로직
 import { getConfig } from '../utils/storage.js';
-import { fetchAssignedIssues, ApiError } from '../utils/api.js';
+import { fetchAssignedIssues, fetchMyself, ApiError } from '../utils/api.js';
 import { escapeHtml } from '../shared/escape-html.js';
 import { groupIssues } from '../shared/issue-grouping.js';
 import { generateIssueListHtml, SIDEPANEL_CLASS_CONFIG as CLS } from '../shared/issue-renderer.js';
@@ -13,6 +13,27 @@ const filterBar = document.getElementById('filter-bar');
 const btnRefresh = document.getElementById('btn-refresh');
 const btnCurrent = document.getElementById('btn-current');
 const btnAll = document.getElementById('btn-all');
+
+async function fetchViaBackground(url, headers) {
+  const response = await chrome.runtime.sendMessage({
+    type: 'FETCH_JIRA',
+    url,
+    headers,
+  });
+
+  if (response?.error) {
+    throw new ApiError(response.status ?? 0, response.error);
+  }
+
+  if (!response?.ok) {
+    const message = response?.body?.errorMessages?.[0]
+      ?? response?.body?.message
+      ?? `HTTP ${response?.status ?? 0}`;
+    throw new ApiError(response?.status ?? 0, message);
+  }
+
+  return response.body ?? {};
+}
 
 function renderLoading() {
   filterBar.style.display = 'none';
@@ -130,7 +151,14 @@ async function loadIssues() {
   }
 
   try {
-    const issues = await fetchAssignedIssues(config, currentFilter);
+    const issues = await fetchAssignedIssues(config, currentFilter, {
+      transport: fetchViaBackground,
+    });
+    if (issues.length === 0) {
+      await fetchMyself(config, {
+        transport: fetchViaBackground,
+      });
+    }
     if (issues.length === 0) {
       renderEmpty();
     } else {

@@ -32,7 +32,12 @@ export async function fetchAssignedIssues(config, sprintFilter, options = {}) {
   const fields = 'summary,status,priority,issuetype,parent';
   const url = `https://${config.domain}.atlassian.net/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=${fields}&maxResults=${MAX_RESULTS}`;
   const data = await requestJson(url, buildHeaders(config), options.transport);
-  return data.issues.map(normalizeIssue);
+  const issues = Array.isArray(data.issues)
+    ? data.issues
+    : Array.isArray(data.values)
+      ? data.values
+      : [];
+  return issues.map(normalizeIssue);
 }
 
 function buildJql(sprintFilter) {

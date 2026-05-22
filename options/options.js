@@ -1,6 +1,6 @@
 // options/options.js — 설정 페이지 로직
 import { getConfig, saveConfig, clearConfig } from '../utils/storage.js';
-import { fetchAssignedIssues } from '../utils/api.js';
+import { fetchMyself } from '../utils/api.js';
 
 const form = document.getElementById('settings-form');
 const domainInput = document.getElementById('domain');
@@ -38,7 +38,7 @@ function validateDomain(domain) {
 
 async function testConnection(domain, email, apiToken) {
   try {
-    await fetchAssignedIssues({ domain, email, apiToken }, 'current');
+    await fetchMyself({ domain, email, apiToken });
     return true;
   } catch (error) {
     if (error.status === 401 || error.status === 403) {

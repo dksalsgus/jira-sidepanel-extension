@@ -12,26 +12,45 @@ const MAX_RESULTS = 50;
 /**
  * 인증 검증 — /rest/api/3/myself 호출
  * @param {Config} config
- * @param {{transport?: (url: string, headers: Record<string, string>) => Promise<any>}} [options]
+ * @param {{transport?: (request: {url: string, init: RequestInit}) => Promise<any>}} [options]
  * @returns {Promise<{accountId: string, displayName: string}>}
  */
 export async function fetchMyself(config, options = {}) {
   const url = `https://${config.domain}.atlassian.net/rest/api/3/myself`;
-  return requestJson(url, buildHeaders(config), options.transport);
+  return requestJson({
+    url,
+    init: {
+      headers: buildHeaders(config),
+    },
+  }, options.transport);
 }
 
 /**
  * 내게 할당된 이슈 조회
  * @param {Config} config
  * @param {'current' | 'all'} sprintFilter
- * @param {{transport?: (url: string, headers: Record<string, string>) => Promise<any>}} [options]
+ * @param {{transport?: (request: {url: string, init: RequestInit}) => Promise<any>, accountId?: string}} [options]
  * @returns {Promise<Issue[]>}
  */
 export async function fetchAssignedIssues(config, sprintFilter, options = {}) {
-  const jql = buildJql(sprintFilter);
-  const fields = 'summary,status,priority,issuetype,parent';
-  const url = `https://${config.domain}.atlassian.net/rest/api/3/search/jql?jql=${encodeURIComponent(jql)}&fields=${fields}&maxResults=${MAX_RESULTS}`;
-  const data = await requestJson(url, buildHeaders(config), options.transport);
+  const jql = buildJql(sprintFilter, options.accountId, config.email);
+  const fields = ['summary', 'status', 'priority', 'issuetype', 'parent'];
+  const url = `https://${config.domain}.atlassian.net/rest/api/3/search/jql`;
+  const data = await requestJson({
+    url,
+    init: {
+      method: 'POST',
+      headers: {
+        ...buildHeaders(config),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jql,
+        fields,
+        maxResults: MAX_RESULTS,
+      }),
+    },
+  }, options.transport);
   const issues = Array.isArray(data.issues)
     ? data.issues
     : Array.isArray(data.values)
@@ -40,11 +59,29 @@ export async function fetchAssignedIssues(config, sprintFilter, options = {}) {
   return issues.map(normalizeIssue);
 }
 
-function buildJql(sprintFilter) {
-  if (sprintFilter === 'current') {
-    return 'assignee = currentUser() AND sprint in openSprints() ORDER BY priority DESC';
+function buildJql(sprintFilter, accountId = '', email = '') {
+  const assigneeTerms = ['assignee = currentUser()'];
+
+  if (accountId) {
+    assigneeTerms.push(`assignee = "${escapeJqlValue(accountId)}"`);
   }
-  return 'assignee = currentUser() ORDER BY updated DESC';
+
+  if (email) {
+    assigneeTerms.push(`assignee = "${escapeJqlValue(email)}"`);
+  }
+
+  const assigneeClause = assigneeTerms.length === 1
+    ? assigneeTerms[0]
+    : `(${assigneeTerms.join(' OR ')})`;
+
+  if (sprintFilter === 'current') {
+    return `${assigneeClause} AND sprint in openSprints() ORDER BY priority DESC`;
+  }
+  return `${assigneeClause} ORDER BY updated DESC`;
+}
+
+function escapeJqlValue(value) {
+  return value.replaceAll('\\', '\\\\').replaceAll('"', '\\"');
 }
 
 function buildHeaders(config) {
@@ -54,12 +91,12 @@ function buildHeaders(config) {
   };
 }
 
-async function requestJson(url, headers, transport = fetchJsonDirect) {
-  return transport(url, headers);
+async function requestJson(request, transport = fetchJsonDirect) {
+  return transport(request);
 }
 
-async function fetchJsonDirect(url, headers) {
-  const response = await fetch(url, { headers });
+async function fetchJsonDirect(request) {
+  const response = await fetch(request.url, request.init);
 
   if (!response.ok) {
     throw new ApiError(response.status, await getErrorMessage(response));

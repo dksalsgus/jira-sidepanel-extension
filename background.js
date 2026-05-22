@@ -1,10 +1,25 @@
 // background.js
-chrome.runtime.onInstalled.addListener(() => {
+function supportsSidePanel() {
+  return typeof chrome.sidePanel?.setPanelBehavior === 'function';
+}
+
+function configureSidePanel() {
+  if (!supportsSidePanel()) return;
   chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {});
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+  configureSidePanel();
 });
 
 chrome.runtime.onStartup.addListener(() => {
-  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {});
+  configureSidePanel();
+});
+
+chrome.action.onClicked.addListener((tab) => {
+  if (supportsSidePanel()) return;
+  if (typeof tab?.id !== 'number') return;
+  chrome.tabs.sendMessage(tab.id, { type: 'TOGGLE_PANEL' }).catch(() => {});
 });
 
 chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
@@ -14,7 +29,7 @@ chrome.runtime.onMessage.addListener((msg, _sender, sendResponse) => {
   }
 
   if (msg.type === 'FETCH_JIRA') {
-    fetch(msg.url, { headers: msg.headers })
+    fetch(msg.request.url, msg.request.init)
       .then(async (response) => {
         const body = await response.json().catch(() => ({}));
         sendResponse({ ok: response.ok, status: response.status, body });

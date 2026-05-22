@@ -15,11 +15,10 @@ const btnRefresh = document.getElementById('btn-refresh');
 const btnCurrent = document.getElementById('btn-current');
 const btnAll = document.getElementById('btn-all');
 
-async function fetchViaBackground(url, headers) {
+async function fetchViaBackground(request) {
   const response = await chrome.runtime.sendMessage({
     type: 'FETCH_JIRA',
-    url,
-    headers,
+    request,
   });
 
   if (response?.error) {
@@ -174,14 +173,13 @@ async function loadIssues() {
   }
 
   try {
-    const issues = await fetchAssignedIssues(config, currentFilter, {
+    const myself = await fetchMyself(config, {
       transport: fetchViaBackground,
     });
-    if (issues.length === 0) {
-      await fetchMyself(config, {
-        transport: fetchViaBackground,
-      });
-    }
+    const issues = await fetchAssignedIssues(config, currentFilter, {
+      transport: fetchViaBackground,
+      accountId: myself.accountId,
+    });
     await writeIssueCache(currentFilter, issues);
     if (issues.length === 0) {
       renderEmpty();

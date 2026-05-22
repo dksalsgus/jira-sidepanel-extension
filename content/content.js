@@ -1,6 +1,6 @@
 // content/content.js — Jira 페이지에 플로팅 패널 주입
 import { getConfig } from '../utils/storage.js';
-import { fetchAssignedIssues, ApiError } from '../utils/api.js';
+import { fetchAssignedIssues, fetchMyself, ApiError } from '../utils/api.js';
 import { escapeHtml } from '../shared/escape-html.js';
 import { getCategoryKey } from '../shared/status-utils.js';
 import { groupIssues } from '../shared/issue-grouping.js';
@@ -16,11 +16,10 @@ let currentView = 'tickets';         // 'tickets' | 'settings'
 let isLoading = false;
 let allIssues = [];
 
-async function fetchViaBackground(url, headers) {
+async function fetchViaBackground(request) {
   const response = await chrome.runtime.sendMessage({
     type: 'FETCH_JIRA',
-    url,
-    headers,
+    request,
   });
 
   if (response?.error) {
@@ -316,8 +315,12 @@ async function loadIssues() {
   }
 
   try {
+    const myself = await fetchMyself(config, {
+      transport: fetchViaBackground,
+    });
     const issues = await fetchAssignedIssues(config, currentSprintFilter, {
       transport: fetchViaBackground,
+      accountId: myself.accountId,
     });
     allIssues = issues.map(withCategoryKey);
     await writeIssueCache(currentSprintFilter, allIssues);

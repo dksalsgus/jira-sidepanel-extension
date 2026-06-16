@@ -1,11 +1,12 @@
 // content/content.js — Jira 페이지에 플로팅 패널 주입
 import { getConfig } from '../utils/storage.js';
-import { fetchAssignedIssues, fetchMyself, ApiError } from '../utils/api.js';
 import { escapeHtml } from '../shared/escape-html.js';
 import { getCategoryKey } from '../shared/status-utils.js';
 import { groupIssues } from '../shared/issue-grouping.js';
 import { generateIssueListHtml, CONTENT_CLASS_CONFIG as CLS } from '../shared/issue-renderer.js';
-import { getIssueCacheAgeLabel, readIssueCache, writeIssueCache } from '../shared/issue-cache.js';
+import { getIssueCacheAgeLabel } from '../shared/issue-cache.js';
+import { loadIssuesWithCache } from '../shared/issue-loading.js';
+import { setGroupCollapsed, toggleGroupFromEvent } from '../shared/group-toggle.js';
 
 const PANEL_ID = 'jira-my-tickets-panel';
 const TOGGLE_BTN_ID = 'jira-my-tickets-toggle';
@@ -15,26 +16,6 @@ let currentStatusFilter = 'all';     // 'all' | 'todo' | 'inprogress' | 'done'
 let currentView = 'tickets';         // 'tickets' | 'settings'
 let isLoading = false;
 let allIssues = [];
-
-async function fetchViaBackground(request) {
-  const response = await chrome.runtime.sendMessage({
-    type: 'FETCH_JIRA',
-    request,
-  });
-
-  if (response?.error) {
-    throw new ApiError(response.status ?? 0, response.error);
-  }
-
-  if (!response?.ok) {
-    const message = response?.body?.errorMessages?.[0]
-      ?? response?.body?.message
-      ?? `HTTP ${response?.status ?? 0}`;
-    throw new ApiError(response?.status ?? 0, message);
-  }
-
-  return response.body ?? {};
-}
 
 // ── 스토리지 ────────────────────────────────────────────────
 function getPrefs() {
@@ -161,20 +142,18 @@ function renderIssues(cacheEntry = null, state = null) {
   const btnCollapseAll = body.querySelector(`#${CLS.btnCollapseAll}`);
   if (btnExpandAll) {
     btnExpandAll.addEventListener('click', () => {
-      body.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.remove('is-collapsed'));
+      body.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => setGroupCollapsed(el, false));
     });
   }
   if (btnCollapseAll) {
     btnCollapseAll.addEventListener('click', () => {
-      body.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.add('is-collapsed'));
+      body.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => setGroupCollapsed(el, true));
     });
   }
 
   body.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => {
-    el.addEventListener('click', (e) => {
-      if (e.target.classList.contains(CLS.groupKey)) return;
-      el.parentElement.classList.toggle('is-collapsed');
-    });
+    el.addEventListener('click', (e) => toggleGroupFromEvent(el, e, CLS.groupKey));
+    el.addEventListener('keydown', (e) => toggleGroupFromEvent(el, e, CLS.groupKey));
   });
 
   body.querySelectorAll(`.${CLS.groupKey}, .${CLS.issue}`).forEach((el) => {
@@ -298,47 +277,25 @@ async function loadIssues() {
   const btnRefresh = panel.querySelector('.jmt-btn-refresh');
   if (btnRefresh) btnRefresh.disabled = true;
 
-  const config = await getConfig();
-  if (!config) {
-    isLoading = false;
-    if (btnRefresh) btnRefresh.disabled = false;
-    renderUnconfigured();
-    return;
-  }
-
-  const cachedEntry = await readIssueCache(currentSprintFilter);
-  if (cachedEntry) {
-    allIssues = cachedEntry.issues.map(withCategoryKey);
-    renderIssues(cachedEntry, 'refreshing');
-  } else {
-    renderLoading();
-  }
-
   try {
-    const myself = await fetchMyself(config, {
-      transport: fetchViaBackground,
+    const result = await loadIssuesWithCache(currentSprintFilter, {
+      onCached: ({ issues, cacheEntry }) => {
+        allIssues = issues.map(withCategoryKey);
+        renderIssues(cacheEntry, 'refreshing');
+      },
+      onCacheMiss: renderLoading,
     });
-    const issues = await fetchAssignedIssues(config, currentSprintFilter, {
-      transport: fetchViaBackground,
-      accountId: myself.accountId,
-    });
-    allIssues = issues.map(withCategoryKey);
-    await writeIssueCache(currentSprintFilter, allIssues);
-    renderIssues();
-  } catch (err) {
-    if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
-      renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
-    } else if (cachedEntry) {
-      allIssues = cachedEntry.issues.map(withCategoryKey);
-      renderIssues(cachedEntry, 'stale');
-    } else if (err instanceof ApiError) {
-      if (err.status === 429) {
-        renderError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', false);
-      } else {
-        renderError(`API 오류 (${err.status}): ${err.message}`, false);
-      }
-    } else {
-      renderError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', false);
+
+    if (result.state === 'unconfigured') {
+      renderUnconfigured();
+    } else if (result.state === 'success') {
+      allIssues = result.issues.map(withCategoryKey);
+      renderIssues();
+    } else if (result.state === 'stale') {
+      allIssues = result.issues.map(withCategoryKey);
+      renderIssues(result.cacheEntry, 'stale');
+    } else if (result.state === 'error') {
+      renderError(result.message, result.kind === 'auth');
     }
   } finally {
     isLoading = false;

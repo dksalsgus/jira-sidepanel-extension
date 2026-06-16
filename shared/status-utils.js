@@ -4,7 +4,12 @@
  * @returns {string}
  */
 export function getStatusBadgeClass(colorName) {
-  const map = { 'blue-grey': 'blue-grey', yellow: 'yellow', green: 'green' };
+  const map = {
+    'blue-gray': 'blue-grey',
+    'blue-grey': 'blue-grey',
+    yellow: 'yellow',
+    green: 'green',
+  };
   return map[colorName] ?? 'default';
 }
 

@@ -1,67 +1,7 @@
 /* sidepanel.css — Apple-inspired clean side panel */
 
 /* ── Design Tokens ── */
-:root {
-  --jmt-bg-primary: #ffffff;
-  --jmt-bg-secondary: #f5f5f7;
-  --jmt-bg-tertiary: #ededf0;
-  --jmt-bg-hover: rgba(0, 0, 0, 0.03);
-  --jmt-bg-active: rgba(0, 0, 0, 0.06);
-  --jmt-surface-pearl: #fafafc;
-  --jmt-text-primary: #1d1d1f;
-  --jmt-text-secondary: #7a7a7a;
-  --jmt-text-tertiary: #999999;
-  --jmt-text-accent: #0066cc;
-  --jmt-accent: #0066cc;
-  --jmt-accent-hover: #0055b3;
-  --jmt-accent-subtle: #e8f0fe;
-  --jmt-accent-text: #0066cc;
-  --jmt-status-todo: #7a7a7a;
-  --jmt-status-todo-bg: #f0f0f0;
-  --jmt-status-progress: #946800;
-  --jmt-status-progress-bg: #fff8e6;
-  --jmt-status-done: #1a7a3a;
-  --jmt-status-done-bg: #eafaf0;
-  --jmt-danger: #d42b2b;
-  --jmt-danger-hover: #b82424;
-  --jmt-danger-subtle: #fef2f2;
-  --jmt-danger-border: #fecaca;
-  --jmt-success: #1a7a3a;
-  --jmt-success-bg: #eafaf0;
-  --jmt-success-border: #a7f3d0;
-  --jmt-border: #e0e0e0;
-  --jmt-border-light: #f0f0f0;
-  --jmt-border-focus: #0071e3;
-  --jmt-shadow-xs: none;
-  --jmt-shadow-sm: none;
-  --jmt-shadow-md: none;
-  --jmt-shadow-lg: none;
-  --jmt-shadow-panel: -1px 0 0 var(--jmt-border);
-  --jmt-space-0_5: 2px;
-  --jmt-space-1: 4px;
-  --jmt-space-2: 8px;
-  --jmt-space-3: 12px;
-  --jmt-space-4: 16px;
-  --jmt-space-5: 20px;
-  --jmt-space-6: 24px;
-  --jmt-space-8: 32px;
-  --jmt-space-10: 40px;
-  --jmt-radius-sm: 8px;
-  --jmt-radius-md: 10px;
-  --jmt-radius-lg: 12px;
-  --jmt-radius-xl: 18px;
-  --jmt-radius-full: 9999px;
-  --jmt-font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
-  --jmt-text-xs: 11px;
-  --jmt-text-sm: 12px;
-  --jmt-text-base: 13px;
-  --jmt-text-md: 14px;
-  --jmt-text-lg: 15px;
-  --jmt-text-xl: 20px;
-  --jmt-transition-fast: 0.12s ease;
-  --jmt-transition-base: 0.2s ease;
-  --jmt-transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+@import url('../shared/design-tokens.css');
 
 * {
   box-sizing: border-box;

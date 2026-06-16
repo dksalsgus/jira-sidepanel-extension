@@ -99,12 +99,12 @@ export function generateIssueHtml(issue, cls) {
 export function generateIssueListHtml(issues, groups, independent, cls) {
   const groupHtml = Array.from(groups.values()).map(group => `
     <div class="${cls.group}">
-      <div class="${cls.groupHeader}">
+      <div class="${cls.groupHeader}" role="button" tabindex="0" aria-expanded="true" aria-controls="${cls.group}-${escapeHtml(group.parent.key)}-children">
         <span class="${cls.groupToggle}">\u25BC</span>
         <span class="${cls.groupKey}" data-key="${escapeHtml(group.parent.key)}">${escapeHtml(group.parent.key)}</span>
         <span class="${cls.groupSummary}">${escapeHtml(group.parent.summary)}</span>
       </div>
-      <div class="${cls.groupChildren}">
+      <div class="${cls.groupChildren}" id="${cls.group}-${escapeHtml(group.parent.key)}-children">
         ${group.children.map(issue => generateIssueHtml(issue, cls)).join('')}
       </div>
     </div>

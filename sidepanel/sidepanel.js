@@ -1,10 +1,11 @@
 // sidepanel/sidepanel.js — Side Panel 메인 로직
 import { getConfig } from '../utils/storage.js';
-import { fetchAssignedIssues, fetchMyself, ApiError } from '../utils/api.js';
 import { escapeHtml } from '../shared/escape-html.js';
 import { groupIssues } from '../shared/issue-grouping.js';
 import { generateIssueListHtml, SIDEPANEL_CLASS_CONFIG as CLS } from '../shared/issue-renderer.js';
-import { getIssueCacheAgeLabel, readIssueCache, writeIssueCache } from '../shared/issue-cache.js';
+import { getIssueCacheAgeLabel } from '../shared/issue-cache.js';
+import { loadIssuesWithCache } from '../shared/issue-loading.js';
+import { setGroupCollapsed, toggleGroupFromEvent } from '../shared/group-toggle.js';
 
 let currentFilter = 'all'; // 'current' | 'all'
 let isLoading = false;
@@ -14,26 +15,6 @@ const filterBar = document.getElementById('filter-bar');
 const btnRefresh = document.getElementById('btn-refresh');
 const btnCurrent = document.getElementById('btn-current');
 const btnAll = document.getElementById('btn-all');
-
-async function fetchViaBackground(request) {
-  const response = await chrome.runtime.sendMessage({
-    type: 'FETCH_JIRA',
-    request,
-  });
-
-  if (response?.error) {
-    throw new ApiError(response.status ?? 0, response.error);
-  }
-
-  if (!response?.ok) {
-    const message = response?.body?.errorMessages?.[0]
-      ?? response?.body?.message
-      ?? `HTTP ${response?.status ?? 0}`;
-    throw new ApiError(response?.status ?? 0, message);
-  }
-
-  return response.body ?? {};
-}
 
 function renderLoading() {
   filterBar.style.display = 'none';
@@ -116,21 +97,19 @@ function renderIssues(issues, cacheEntry = null, state = null) {
   const btnCollapseAll = contentEl.querySelector(`#${CLS.btnCollapseAll}`);
   if (btnExpandAll) {
     btnExpandAll.addEventListener('click', () => {
-      contentEl.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.remove('is-collapsed'));
+      contentEl.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => setGroupCollapsed(el, false));
     });
   }
   if (btnCollapseAll) {
     btnCollapseAll.addEventListener('click', () => {
-      contentEl.querySelectorAll(`.${CLS.group}`).forEach(el => el.classList.add('is-collapsed'));
+      contentEl.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => setGroupCollapsed(el, true));
     });
   }
 
   // 토글 이벤트
   contentEl.querySelectorAll(`.${CLS.groupHeader}`).forEach(el => {
-    el.addEventListener('click', (e) => {
-      if (e.target.classList.contains(CLS.groupKey)) return;
-      el.parentElement.classList.toggle('is-collapsed');
-    });
+    el.addEventListener('click', (e) => toggleGroupFromEvent(el, e, CLS.groupKey));
+    el.addEventListener('keydown', (e) => toggleGroupFromEvent(el, e, CLS.groupKey));
   });
 
   // 티켓 및 부모 키 클릭 시 새 탭으로 열기
@@ -153,56 +132,30 @@ async function loadIssues() {
   isLoading = true;
   btnRefresh.disabled = true;
 
-  const config = await getConfig();
-  if (!config) {
-    isLoading = false;
-    btnRefresh.disabled = false;
-    renderUnconfigured();
-    return;
-  }
-
-  const cachedEntry = await readIssueCache(currentFilter);
-  if (cachedEntry) {
-    if (cachedEntry.issues.length === 0) {
-      renderEmpty(cachedEntry, 'refreshing');
-    } else {
-      renderIssues(cachedEntry.issues, cachedEntry, 'refreshing');
-    }
-  } else {
-    renderLoading();
-  }
-
   try {
-    const myself = await fetchMyself(config, {
-      transport: fetchViaBackground,
+    const result = await loadIssuesWithCache(currentFilter, {
+      onCached: ({ issues, cacheEntry }) => {
+        if (issues.length === 0) {
+          renderEmpty(cacheEntry, 'refreshing');
+        } else {
+          renderIssues(issues, cacheEntry, 'refreshing');
+        }
+      },
+      onCacheMiss: renderLoading,
     });
-    const issues = await fetchAssignedIssues(config, currentFilter, {
-      transport: fetchViaBackground,
-      accountId: myself.accountId,
-    });
-    await writeIssueCache(currentFilter, issues);
-    if (issues.length === 0) {
-      renderEmpty();
-    } else {
-      renderIssues(issues);
-    }
-  } catch (err) {
-    if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
-      renderError(`인증 오류 (${err.status}): 이메일과 API Token을 확인해주세요.`, true);
-    } else if (cachedEntry) {
-      if (cachedEntry.issues.length === 0) {
-        renderError('최신 티켓을 불러오지 못했습니다. 설정과 네트워크를 확인한 뒤 다시 시도해주세요.', false);
+
+    if (result.state === 'unconfigured') {
+      renderUnconfigured();
+    } else if (result.state === 'success') {
+      if (result.issues.length === 0) {
+        renderEmpty();
       } else {
-        renderIssues(cachedEntry.issues, cachedEntry, 'stale');
+        renderIssues(result.issues);
       }
-    } else if (err instanceof ApiError) {
-      if (err.status === 429) {
-        renderError('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.', false);
-      } else {
-        renderError(`API 오류 (${err.status}): ${err.message}`, false);
-      }
-    } else {
-      renderError('네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.', false);
+    } else if (result.state === 'stale') {
+      renderIssues(result.issues, result.cacheEntry, 'stale');
+    } else if (result.state === 'error') {
+      renderError(result.message, result.kind === 'auth');
     }
   } finally {
     isLoading = false;

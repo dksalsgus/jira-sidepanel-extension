@@ -21,7 +21,7 @@ function renderLoading() {
   contentEl.innerHTML = `
     <div class="loading">
       <div class="spinner"></div>
-      <span>불러오는 중...</span>
+      <span>Loading...</span>
     </div>
   `;
 }
@@ -31,11 +31,11 @@ function renderUnconfigured() {
   contentEl.innerHTML = `
     <div class="empty-state">
       <div class="empty-state__icon">⚙️</div>
-      <div class="empty-state__title">설정이 필요합니다</div>
+      <div class="empty-state__title">Setup required</div>
       <div class="empty-state__desc">
-        Jira 도메인, 이메일, API Token을 입력하여 내 티켓을 확인하세요.
+        Enter your Jira domain, email, and API token to view your issues.
       </div>
-      <button class="empty-state__btn" id="btn-open-options">설정 열기</button>
+      <button class="empty-state__btn" id="btn-open-options">Open Settings</button>
     </div>
   `;
   document.getElementById('btn-open-options').addEventListener('click', () => {
@@ -48,9 +48,9 @@ function renderError(message, isAuthError) {
   contentEl.innerHTML = `
     <div class="empty-state">
       <div class="empty-state__icon">⚠️</div>
-      <div class="empty-state__title">${isAuthError ? '인증 실패' : '오류 발생'}</div>
+      <div class="empty-state__title">${isAuthError ? 'Authentication Failed' : 'Something Went Wrong'}</div>
       <div class="empty-state__desc">${escapeHtml(message)}</div>
-      ${isAuthError ? '<button class="empty-state__btn" id="btn-open-options">설정 확인</button>' : ''}
+      ${isAuthError ? '<button class="empty-state__btn" id="btn-open-options">Check Settings</button>' : ''}
     </div>
   `;
   if (isAuthError) {
@@ -64,8 +64,8 @@ function getCacheNoticeHtml(cacheEntry, state) {
   if (!cacheEntry) return '';
   const age = getIssueCacheAgeLabel(cacheEntry.cachedAt);
   const message = state === 'stale'
-    ? `최신 조회에 실패해 ${age} 데이터를 표시합니다.`
-    : `${age} 데이터를 표시하는 중입니다.`;
+    ? `Could not refresh. Showing data from ${age}.`
+    : `Showing data from ${age}.`;
   return `<div class="cache-notice">${escapeHtml(message)}</div>`;
 }
 
@@ -75,9 +75,9 @@ function renderEmpty(cacheEntry = null, state = null) {
     ${getCacheNoticeHtml(cacheEntry, state)}
     <div class="empty-state">
       <div class="empty-state__icon">✅</div>
-      <div class="empty-state__title">할당된 티켓이 없습니다</div>
+      <div class="empty-state__title">No assigned issues</div>
       <div class="empty-state__desc">
-        ${currentFilter === 'current' ? '현재 스프린트에 할당된 티켓이 없습니다.' : '할당된 티켓이 없습니다.'}
+        ${currentFilter === 'current' ? 'No issues assigned in the current sprint.' : 'No issues are assigned to you.'}
       </div>
     </div>
   `;

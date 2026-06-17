@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jira My Tickets — 설정</title>
+  <title>Please Be Done Settings</title>
   <link rel="stylesheet" href="../shared/design-tokens.css" />
   <style>
     * {
@@ -220,12 +220,12 @@
 </head>
 <body>
   <div class="container">
-    <h1>Jira My Tickets 설정</h1>
-    <p class="subtitle">Atlassian API Token으로 인증하여 내게 할당된 티켓을 확인하세요.</p>
+    <h1>Please Be Done Settings</h1>
+    <p class="subtitle">Connect with an Atlassian API token to view your assigned Jira issues.</p>
 
     <form id="settings-form">
       <div class="form-group">
-        <label for="domain">Jira 도메인</label>
+        <label for="domain">Jira Domain</label>
         <input
           type="text"
           id="domain"
@@ -233,11 +233,11 @@
           autocomplete="off"
           spellcheck="false"
         />
-        <p class="hint">예: mycompany → https://mycompany.atlassian.net</p>
+        <p class="hint">Example: mycompany -> https://mycompany.atlassian.net</p>
       </div>
 
       <div class="form-group">
-        <label for="email">이메일</label>
+        <label for="email">Email</label>
         <input
           type="email"
           id="email"
@@ -251,7 +251,7 @@
         <input
           type="password"
           id="api-token"
-          placeholder="API Token 입력"
+          placeholder="Enter API token"
           autocomplete="off"
         />
         <p class="hint">
@@ -259,23 +259,23 @@
             href="https://id.atlassian.com/manage-profile/security/api-tokens"
             target="_blank"
             class="api-token-link"
-          >Atlassian API Token 발급 페이지</a>에서 토큰을 생성하세요.
+          >Create an Atlassian API token</a>.
         </p>
       </div>
 
       <div class="form-group form-group--checkbox">
         <input type="checkbox" id="auto-open" />
-        <label for="auto-open">Jira 진입 시 패널 자동으로 열기</label>
+        <label for="auto-open">Open the panel automatically on Jira</label>
       </div>
 
       <div class="form-group form-group--checkbox">
         <input type="checkbox" id="show-float-all-sites" />
-        <label for="show-float-all-sites">모든 사이트에서 플로팅 버튼 표시</label>
+        <label for="show-float-all-sites">Show the floating button on all sites</label>
       </div>
 
       <div class="actions">
-        <button type="submit" class="btn-save">저장</button>
-        <button type="button" class="btn-clear" id="btn-clear">초기화</button>
+        <button type="submit" class="btn-save">Save</button>
+        <button type="button" class="btn-clear" id="btn-clear">Reset</button>
       </div>
     </form>
 

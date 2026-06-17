@@ -114,10 +114,10 @@ export function generateIssueListHtml(issues, groups, independent, cls) {
 
   return `
     <div class="${cls.issueCountBar}">
-      <span class="${cls.issueCount}">${issues.length}개의 티켓</span>
+      <span class="${cls.issueCount}">${issues.length} issue${issues.length === 1 ? '' : 's'}</span>
       <div class="${cls.issueControls}">
-        <button class="${cls.issueControlBtn}" id="${cls.btnExpandAll}">모두 펼치기</button>
-        <button class="${cls.issueControlBtn}" id="${cls.btnCollapseAll}">모두 접기</button>
+        <button class="${cls.issueControlBtn}" id="${cls.btnExpandAll}">Expand All</button>
+        <button class="${cls.issueControlBtn}" id="${cls.btnCollapseAll}">Collapse All</button>
       </div>
     </div>
     <div class="${cls.issueList}">${groupHtml}${indepHtml}</div>

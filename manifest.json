@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Please Be Done",
   "version": "1.1.0",
-  "description": "Please Be Done — 내게 할당된 Jira 티켓을 빠르게 확인",
+  "description": "Please Be Done — quickly check your assigned Jira issues",
   "minimum_chrome_version": "114",
 
   "permissions": [

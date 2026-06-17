@@ -110,11 +110,11 @@ function normalizeIssue(raw) {
   const statusCategory = fields.status?.statusCategory?.colorName ?? 'default';
   const parent = fields.parent ? {
     key: fields.parent.key,
-    summary: fields.parent.fields?.summary ?? '(제목 없음)'
+    summary: fields.parent.fields?.summary ?? '(No title)'
   } : null;
   return {
     key: raw.key,
-    summary: fields.summary ?? '(제목 없음)',
+    summary: fields.summary ?? '(No title)',
     status: fields.status?.name ?? '',
     statusCategory,
     priority: fields.priority?.name ?? '',

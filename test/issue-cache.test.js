@@ -40,8 +40,11 @@ test('returns only cache entries that match the requested filter and shape', () 
 test('formats cache age for stale-data messages', () => {
   const now = 1710000000000;
 
-  assert.equal(getIssueCacheAgeLabel(now - 30 * 1000, now), '방금 전');
-  assert.equal(getIssueCacheAgeLabel(now - 5 * 60 * 1000, now), '5분 전');
-  assert.equal(getIssueCacheAgeLabel(now - 2 * 60 * 60 * 1000, now), '2시간 전');
-  assert.equal(getIssueCacheAgeLabel(now - 3 * 24 * 60 * 60 * 1000, now), '3일 전');
+  assert.equal(getIssueCacheAgeLabel(now - 30 * 1000, now), 'just now');
+  assert.equal(getIssueCacheAgeLabel(now - 60 * 1000, now), '1 minute ago');
+  assert.equal(getIssueCacheAgeLabel(now - 5 * 60 * 1000, now), '5 minutes ago');
+  assert.equal(getIssueCacheAgeLabel(now - 60 * 60 * 1000, now), '1 hour ago');
+  assert.equal(getIssueCacheAgeLabel(now - 2 * 60 * 60 * 1000, now), '2 hours ago');
+  assert.equal(getIssueCacheAgeLabel(now - 24 * 60 * 60 * 1000, now), '1 day ago');
+  assert.equal(getIssueCacheAgeLabel(now - 3 * 24 * 60 * 60 * 1000, now), '3 days ago');
 });

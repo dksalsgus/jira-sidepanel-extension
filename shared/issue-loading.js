@@ -59,7 +59,7 @@ function classifyIssueLoadError(error, cacheEntry) {
       state: 'error',
       kind: 'stale-empty',
       status: 0,
-      message: '최신 티켓을 불러오지 못했습니다. 설정과 네트워크를 확인한 뒤 다시 시도해주세요.',
+      message: 'Could not load the latest issues. Check your settings and network, then try again.',
     };
   }
 
@@ -68,7 +68,7 @@ function classifyIssueLoadError(error, cacheEntry) {
       state: 'error',
       kind: 'auth',
       status: error.status,
-      message: `인증 오류 (${error.status}): 이메일과 API Token을 확인해주세요.`,
+      message: `Authentication error (${error.status}): check your email and API token.`,
     };
   }
 
@@ -77,7 +77,7 @@ function classifyIssueLoadError(error, cacheEntry) {
       state: 'error',
       kind: 'rate-limit',
       status: error.status,
-      message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+      message: 'Too many requests. Try again in a moment.',
     };
   }
 
@@ -86,7 +86,7 @@ function classifyIssueLoadError(error, cacheEntry) {
       state: 'error',
       kind: 'api',
       status: error.status,
-      message: `API 오류 (${error.status}): ${error.message}`,
+      message: `API error (${error.status}): ${error.message}`,
     };
   }
 
@@ -94,6 +94,6 @@ function classifyIssueLoadError(error, cacheEntry) {
     state: 'error',
     kind: 'network',
     status: 0,
-    message: '네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.',
+    message: 'Network error. Check your internet connection.',
   };
 }

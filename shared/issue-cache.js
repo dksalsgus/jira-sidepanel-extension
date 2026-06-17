@@ -23,15 +23,15 @@ export function getUsableIssueCacheEntry(entry, filter) {
 export function getIssueCacheAgeLabel(cachedAt, now = Date.now()) {
   const elapsedMs = Math.max(0, now - cachedAt);
   const minutes = Math.floor(elapsedMs / 60000);
-  if (minutes < 1) return '방금 전';
+  if (minutes < 1) return 'just now';
 
   const hours = Math.floor(minutes / 60);
-  if (hours < 1) return `${minutes}분 전`;
+  if (hours < 1) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
 
   const days = Math.floor(hours / 24);
-  if (days < 1) return `${hours}시간 전`;
+  if (days < 1) return `${hours} hour${hours === 1 ? '' : 's'} ago`;
 
-  return `${days}일 전`;
+  return `${days} day${days === 1 ? '' : 's'} ago`;
 }
 
 export async function readIssueCache(filter) {

@@ -81,7 +81,7 @@ test('loadIssuesWithCache classifies auth and rate-limit failures without cache'
     state: 'error',
     kind: 'auth',
     status: 401,
-    message: '인증 오류 (401): 이메일과 API Token을 확인해주세요.',
+    message: 'Authentication error (401): check your email and API token.',
   });
 
   const rateLimitResult = await loadIssuesWithCache('all', {
@@ -99,6 +99,6 @@ test('loadIssuesWithCache classifies auth and rate-limit failures without cache'
     state: 'error',
     kind: 'rate-limit',
     status: 429,
-    message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+    message: 'Too many requests. Try again in a moment.',
   });
 });

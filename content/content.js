@@ -42,7 +42,7 @@ function renderLoading() {
   getPanelEl().querySelector('.jmt-body').innerHTML = `
     <div class="jmt-loading">
       <div class="jmt-spinner"></div>
-      <span>불러오는 중...</span>
+      <span>Loading...</span>
     </div>
   `;
 }
@@ -53,9 +53,9 @@ function renderUnconfigured() {
   body.innerHTML = `
     <div class="jmt-empty">
       <div class="jmt-empty__icon">⚙️</div>
-      <div class="jmt-empty__title">설정이 필요합니다</div>
-      <div class="jmt-empty__desc">우측 상단 ⚙ 버튼에서 Jira 정보를 입력하세요.</div>
-      <button class="jmt-btn-primary jmt-goto-settings">설정으로 이동</button>
+      <div class="jmt-empty__title">Setup required</div>
+      <div class="jmt-empty__desc">Use the settings button in the top right to enter your Jira details.</div>
+      <button class="jmt-btn-primary jmt-goto-settings">Go to Settings</button>
     </div>
   `;
   body.querySelector('.jmt-goto-settings').addEventListener('click', () => showView('settings'));
@@ -67,9 +67,9 @@ function renderError(message, isAuth) {
   body.innerHTML = `
     <div class="jmt-empty">
       <div class="jmt-empty__icon">⚠️</div>
-      <div class="jmt-empty__title">${isAuth ? '인증 실패' : '오류 발생'}</div>
+      <div class="jmt-empty__title">${isAuth ? 'Authentication Failed' : 'Something Went Wrong'}</div>
       <div class="jmt-empty__desc">${escapeHtml(message)}</div>
-      ${isAuth ? '<button class="jmt-btn-primary jmt-goto-settings">설정 확인</button>' : ''}
+      ${isAuth ? '<button class="jmt-btn-primary jmt-goto-settings">Check Settings</button>' : ''}
     </div>
   `;
   if (isAuth) {
@@ -81,8 +81,8 @@ function getCacheNoticeHtml(cacheEntry, state) {
   if (!cacheEntry) return '';
   const age = getIssueCacheAgeLabel(cacheEntry.cachedAt);
   const message = state === 'stale'
-    ? `최신 조회에 실패해 ${age} 데이터를 표시합니다.`
-    : `${age} 데이터를 표시하는 중입니다.`;
+    ? `Could not refresh. Showing data from ${age}.`
+    : `Showing data from ${age}.`;
   return `<div class="jmt-cache-notice">${escapeHtml(message)}</div>`;
 }
 
@@ -124,8 +124,8 @@ function renderIssues(cacheEntry = null, state = null) {
       ${getCacheNoticeHtml(cacheEntry, state)}
       <div class="jmt-empty">
         <div class="jmt-empty__icon">✅</div>
-        <div class="jmt-empty__title">티켓이 없습니다</div>
-        <div class="jmt-empty__desc">조건에 맞는 티켓이 없습니다.</div>
+        <div class="jmt-empty__title">No issues</div>
+        <div class="jmt-empty__desc">No issues match the current filters.</div>
       </div>
     `;
     return;
@@ -178,16 +178,16 @@ async function renderSettings() {
   body.innerHTML = `
     <div class="jmt-settings">
       <div class="jmt-settings__section">
-        <div class="jmt-settings__title">Jira 연결</div>
+        <div class="jmt-settings__title">Jira Connection</div>
 
         <div class="jmt-field">
-          <label class="jmt-label" for="jmt-domain">도메인</label>
+          <label class="jmt-label" for="jmt-domain">Domain</label>
           <input class="jmt-input" id="jmt-domain" type="text" placeholder="mycompany" value="${escapeHtml(config.domain)}" spellcheck="false" />
           <span class="jmt-hint">mycompany.atlassian.net</span>
         </div>
 
         <div class="jmt-field">
-          <label class="jmt-label" for="jmt-email">이메일</label>
+          <label class="jmt-label" for="jmt-email">Email</label>
           <input class="jmt-input" id="jmt-email" type="email" placeholder="you@example.com" value="${escapeHtml(config.email)}" />
         </div>
 
@@ -198,23 +198,23 @@ async function renderSettings() {
       </div>
 
       <div class="jmt-settings__section">
-        <div class="jmt-settings__title">옵션</div>
+        <div class="jmt-settings__title">Options</div>
 
         <label class="jmt-toggle">
           <input type="checkbox" id="jmt-auto-open" ${prefs.autoOpen ? 'checked' : ''} />
           <span class="jmt-toggle__track"></span>
-          <span class="jmt-toggle__label">Jira 진입 시 패널 자동 열기</span>
+          <span class="jmt-toggle__label">Open the panel automatically on Jira</span>
         </label>
 
         <label class="jmt-toggle">
           <input type="checkbox" id="jmt-float-all" ${prefs.showFloatOnAllSites ? 'checked' : ''} />
           <span class="jmt-toggle__track"></span>
-          <span class="jmt-toggle__label">모든 사이트에서 플로팅 버튼 표시</span>
+          <span class="jmt-toggle__label">Show the floating button on all sites</span>
         </label>
       </div>
 
       <div class="jmt-settings__actions">
-        <button class="jmt-btn-primary" id="jmt-save">저장</button>
+        <button class="jmt-btn-primary" id="jmt-save">Save</button>
         <div class="jmt-save-msg" id="jmt-save-msg"></div>
       </div>
     </div>
@@ -229,7 +229,7 @@ async function renderSettings() {
     const showFloatOnAllSites = body.querySelector('#jmt-float-all').checked;
 
     if (!domain || !email || !apiToken) {
-      showSaveMsg('모든 필드를 입력해주세요.', false);
+      showSaveMsg('Enter all required fields.', false);
       return;
     }
 
@@ -309,32 +309,32 @@ function createPanel() {
   panel.id = PANEL_ID;
   panel.innerHTML = `
     <div class="jmt-header">
-      <button class="jmt-btn-back" title="뒤로" style="display:none">←</button>
+      <button class="jmt-btn-back" title="Back" style="display:none">←</button>
       <span class="jmt-header__title">Please Be Done</span>
       <div class="jmt-header__actions">
-        <button class="jmt-btn-refresh" title="새로고침">↻</button>
-        <button class="jmt-btn-settings" title="설정">⚙</button>
-        <button class="jmt-btn-close" title="닫기">✕</button>
+        <button class="jmt-btn-refresh" title="Refresh">↻</button>
+        <button class="jmt-btn-settings" title="Settings">⚙</button>
+        <button class="jmt-btn-close" title="Close">✕</button>
       </div>
     </div>
 
     <div class="jmt-filter-bar jmt-sprint-bar" style="display:none">
-      <button class="jmt-sprint-btn jmt-sprint-btn--active" data-sprint="all">전체</button>
-      <button class="jmt-sprint-btn" data-sprint="current">현재 스프린트</button>
+      <button class="jmt-sprint-btn jmt-sprint-btn--active" data-sprint="all">All</button>
+      <button class="jmt-sprint-btn" data-sprint="current">Current Sprint</button>
     </div>
 
     <div class="jmt-filter-bar jmt-status-bar" style="display:none">
       <button class="jmt-status-btn jmt-status-btn--active" data-status="all">
-        전체 <span class="jmt-status-btn__count">0</span>
+        All <span class="jmt-status-btn__count">0</span>
       </button>
       <button class="jmt-status-btn" data-status="todo">
-        할 일 <span class="jmt-status-btn__count">0</span>
+        To Do <span class="jmt-status-btn__count">0</span>
       </button>
       <button class="jmt-status-btn" data-status="inprogress">
-        진행 중 <span class="jmt-status-btn__count">0</span>
+        In Progress <span class="jmt-status-btn__count">0</span>
       </button>
       <button class="jmt-status-btn" data-status="done">
-        완료 <span class="jmt-status-btn__count">0</span>
+        Done <span class="jmt-status-btn__count">0</span>
       </button>
     </div>
 

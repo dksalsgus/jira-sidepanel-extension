@@ -42,12 +42,12 @@ async function testConnection(domain, email, apiToken) {
     return true;
   } catch (error) {
     if (error.status === 401 || error.status === 403) {
-      throw new Error('인증 실패: 이메일과 API Token을 확인해주세요.');
+      throw new Error('Authentication failed: check your email and API token.');
     }
     if (error.status === 404) {
-      throw new Error('도메인을 찾을 수 없습니다.');
+      throw new Error('Domain not found.');
     }
-    throw new Error('연결 실패: 네트워크를 확인해주세요.');
+    throw new Error('Connection failed: check your network.');
   }
 }
 
@@ -72,27 +72,27 @@ form.addEventListener('submit', async (e) => {
 
   // 유효성 검사
   if (!domain || !email || !apiToken) {
-    showStatus('모든 필드를 입력해주세요.', 'error');
+    showStatus('Enter all required fields.', 'error');
     return;
   }
 
   if (!validateDomain(domain)) {
-    showStatus('유효하지 않은 도메인입니다. (예: mycompany)', 'error');
+    showStatus('Enter a valid domain. Example: mycompany', 'error');
     return;
   }
 
   if (!validateEmail(email)) {
-    showStatus('유효하지 않은 이메일 형식입니다.', 'error');
+    showStatus('Enter a valid email address.', 'error');
     return;
   }
 
   if (!validateApiToken(apiToken)) {
-    showStatus('유효하지 않은 API Token입니다. ATCT로 시작해야 합니다.', 'error');
+    showStatus('Enter a valid API token. It should start with ATCT or ATATT.', 'error');
     return;
   }
 
   // 연결 테스트
-  showStatus('연결 테스트 중...', 'info');
+  showStatus('Testing connection...', 'info');
   try {
     await testConnection(domain, email, apiToken);
   } catch (error) {
@@ -104,7 +104,7 @@ form.addEventListener('submit', async (e) => {
   await saveConfig({ domain, email, apiToken });
   await chrome.storage.sync.set({ autoOpen: autoOpenInput.checked, showFloatOnAllSites: showFloatAllSitesInput.checked });
   domainInput.value = domain;
-  showStatus('설정이 저장되었습니다.', 'success');
+  showStatus('Settings saved.', 'success');
 });
 
 btnClear.addEventListener('click', async () => {
@@ -115,7 +115,7 @@ btnClear.addEventListener('click', async () => {
   apiTokenInput.value = '';
   autoOpenInput.checked = false;
   showFloatAllSitesInput.checked = false;
-  showStatus('설정이 초기화되었습니다.', 'success');
+  showStatus('Settings cleared.', 'success');
 });
 
 loadSavedConfig();

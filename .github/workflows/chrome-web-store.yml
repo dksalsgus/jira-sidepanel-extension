@@ -1,0 +1,58 @@
+name: Chrome Web Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Submit uploaded extension for Chrome Web Store review
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build extension
+        run: npm run build:prod
+
+      - name: Create extension zip
+        run: |
+          cd dist
+          zip -r ../please-be-done.zip .
+
+      - name: Verify zip root
+        run: unzip -l please-be-done.zip | grep -q "manifest.json"
+
+      - name: Upload to Chrome Web Store
+        env:
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          CWS_PUBLISHER_ID: ${{ secrets.CWS_PUBLISHER_ID }}
+          CWS_EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          ZIP_PATH: please-be-done.zip
+          PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == 'true' && 'true' || 'false' }}
+        run: node scripts/chrome-web-store-upload.mjs

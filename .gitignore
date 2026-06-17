@@ -1,17 +1,20 @@
-# 배포용 패키지
+# Dependencies
+node_modules/
+
+# Build and package output
+dist/
 *.zip
 
-# macOS
-.DS_Store
-
-# 빌드
-node_modules/
-dist/
-
-# 스크린샷 및 홍보 이미지
+# Local browser/test artifacts
+.playwright-mcp/
 screenshots/
 promotional/
 
-# Claude 관련
-.claude/settings.local.json
+# Local agent/editor state
+.claude/
 .omx/
+AGENTS.md
+docs/superpowers/
+
+# macOS
+.DS_Store

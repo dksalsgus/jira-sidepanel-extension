@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Please Be Done Store Assets</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-soft: #fafafc;
+      --line: #e8e8ed;
+      --line-soft: #f0f0f0;
+      --ink: #1d1d1f;
+      --muted: #7a7a7a;
+      --quiet: #999999;
+      --blue: #0066cc;
+      --blue-hover: #0071e3;
+      --blue-soft: #e8f0fe;
+      --todo-bg: #f0f0f0;
+      --todo: #7a7a7a;
+      --progress-bg: #fff8e6;
+      --progress: #946800;
+      --done-bg: #eafaf0;
+      --done: #1a7a3a;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    body {
+      display: grid;
+      place-items: center;
+    }
+
+    .asset {
+      position: relative;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .asset--promo {
+      width: 440px;
+      height: 280px;
+      background:
+        radial-gradient(circle at 88% 14%, rgba(0, 102, 204, 0.18), transparent 32%),
+        linear-gradient(145deg, #ffffff 0%, #f5f5f7 54%, #eceef2 100%);
+    }
+
+    .asset--marquee {
+      width: 1400px;
+      height: 560px;
+      background:
+        radial-gradient(circle at 74% 7%, rgba(0, 102, 204, 0.18), transparent 27%),
+        linear-gradient(135deg, #ffffff 0%, #f5f5f7 52%, #ebeef4 100%);
+    }
+
+    .asset--screenshot {
+      width: 1280px;
+      height: 800px;
+      background: #f5f5f7;
+    }
+
+    .browser {
+      position: absolute;
+      inset: 28px;
+      background: var(--surface);
+      border: 1px solid #dfe1e6;
+      border-radius: 14px;
+      box-shadow: 0 28px 70px rgba(20, 24, 35, 0.12);
+      overflow: hidden;
+    }
+
+    .browser--promo {
+      inset: 30px 22px 24px 154px;
+      border-radius: 11px;
+      box-shadow: 0 18px 42px rgba(20, 24, 35, 0.15);
+    }
+
+    .browser--marquee {
+      inset: 62px 64px 48px 620px;
+      border-radius: 16px;
+      box-shadow: 0 32px 90px rgba(20, 24, 35, 0.16);
+    }
+
+    .topbar {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      background: #f9f9fb;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #d6d6dc;
+    }
+
+    .address {
+      flex: 1;
+      height: 26px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .webpage {
+      position: absolute;
+      left: 0;
+      top: 46px;
+      bottom: 0;
+      right: 342px;
+      padding: 40px 48px;
+      background: var(--surface);
+    }
+
+    .webpage--wide {
+      right: 0;
+      padding-right: 390px;
+    }
+
+    .kicker {
+      width: 118px;
+      height: 12px;
+      border-radius: 999px;
+      background: #d7e8fb;
+      margin-bottom: 18px;
+    }
+
+    .headline {
+      width: 420px;
+      height: 34px;
+      border-radius: 7px;
+      background: #222226;
+      margin-bottom: 14px;
+    }
+
+    .copy-line {
+      height: 12px;
+      border-radius: 999px;
+      background: #e8e8ed;
+      margin-bottom: 10px;
+    }
+
+    .copy-line--a { width: 440px; }
+    .copy-line--b { width: 360px; }
+    .copy-line--c { width: 290px; }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 36px;
+      max-width: 720px;
+    }
+
+    .board-card {
+      height: 132px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-soft);
+      padding: 16px;
+    }
+
+    .board-title {
+      width: 74px;
+      height: 13px;
+      border-radius: 999px;
+      background: #cfd2da;
+      margin-bottom: 20px;
+    }
+
+    .board-row {
+      height: 10px;
+      border-radius: 999px;
+      background: #ececf1;
+      margin-bottom: 10px;
+    }
+
+    .sidepanel {
+      position: absolute;
+      top: 46px;
+      right: 0;
+      bottom: 0;
+      width: 342px;
+      background: var(--surface);
+      border-left: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .sidepanel--detached {
+      top: 36px;
+      right: 40px;
+      bottom: 36px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      box-shadow: 0 26px 70px rgba(20, 24, 35, 0.16);
+    }
+
+    .panel-header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line-soft);
+      background: var(--surface);
+    }
+
+    .panel-title {
+      font-size: 15px;
+      font-weight: 650;
+      letter-spacing: -0.2px;
+    }
+
+    .panel-actions {
+      display: flex;
+      gap: 2px;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .icon-button {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+    }
+
+    .icon-button--active {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .filter-row,
+    .status-row {
+      display: flex;
+      gap: 4px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--line-soft);
+      background: var(--surface);
+    }
+
+    .pill {
+      min-height: 32px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .pill--active {
+      color: #fff;
+      border-color: var(--blue);
+      background: var(--blue);
+      font-weight: 650;
+    }
+
+    .status-row {
+      gap: 8px;
+    }
+
+    .status-button {
+      flex: 1;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.2;
+      background: var(--surface);
+    }
+
+    .status-button b {
+      display: block;
+      color: inherit;
+      font-size: 15px;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+
+    .status-button--active {
+      color: var(--blue);
+      border-color: var(--blue);
+      background: var(--blue-soft);
+      font-weight: 650;
+    }
+
+    .count-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      color: var(--quiet);
+      font-size: 11px;
+    }
+
+    .links {
+      display: flex;
+      gap: 10px;
+      color: var(--blue);
+      font-size: 11px;
+    }
+
+    .group {
+      margin-bottom: 6px;
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      height: 34px;
+      margin: 0 8px 4px;
+      padding: 0 12px;
+      border-radius: 8px;
+      background: #f5f5f7;
+      font-size: 12px;
+      color: var(--ink);
+      overflow: hidden;
+    }
+
+    .chevron {
+      color: var(--quiet);
+      font-size: 10px;
+      margin-right: 8px;
+    }
+
+    .issue-key {
+      color: var(--blue);
+      font-weight: 650;
+      margin-right: 8px;
+      white-space: nowrap;
+      font-size: 11px;
+    }
+
+    .group-title {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .children {
+      margin-left: 20px;
+      padding-left: 10px;
+      border-left: 2px solid var(--line-soft);
+    }
+
+    .issue {
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px;
+      margin: 0 8px;
+      border-radius: 8px;
+    }
+
+    .issue--hover {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .priority {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+
+    .priority svg {
+      display: block;
+      width: 16px;
+      height: 16px;
+    }
+
+    .issue-body {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .summary {
+      margin-top: 1px;
+      color: var(--ink);
+      font-size: 12px;
+      line-height: 1.42;
+      letter-spacing: -0.01px;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 5px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      height: 17px;
+      border-radius: 999px;
+      padding: 0 8px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+    }
+
+    .badge--todo {
+      color: var(--todo);
+      background: var(--todo-bg);
+    }
+
+    .badge--progress {
+      color: var(--progress);
+      background: var(--progress-bg);
+    }
+
+    .badge--done {
+      color: var(--done);
+      background: var(--done-bg);
+    }
+
+    .type-icon {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      background: #49a3ff;
+    }
+
+    .floating-panel {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 342px;
+      height: 100%;
+      background: var(--surface);
+      border-left: 1px solid var(--line);
+      box-shadow: -22px 0 48px rgba(20, 24, 35, 0.16);
+    }
+
+    .toggle-tab {
+      position: absolute;
+      right: 342px;
+      bottom: 80px;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px 0 0 10px;
+      background: rgba(0, 0, 0, 0.66);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .settings {
+      padding: 16px 12px;
+    }
+
+    .section-label {
+      color: var(--quiet);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .input {
+      height: 44px;
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0 18px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .hint {
+      color: var(--quiet);
+      font-size: 11px;
+      margin-top: 5px;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .track {
+      position: relative;
+      width: 44px;
+      height: 26px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .track::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--surface);
+    }
+
+    .save {
+      height: 44px;
+      border-radius: 999px;
+      background: var(--blue);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 22px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .brand {
+      position: absolute;
+      left: 28px;
+      top: 34px;
+      width: 86px;
+      height: 86px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, #0071e3, #0054b5);
+      box-shadow: 0 22px 44px rgba(0, 102, 204, 0.24);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 31px;
+      font-weight: 760;
+      letter-spacing: -1.2px;
+    }
+
+    .promo-copy {
+      position: absolute;
+      left: 26px;
+      bottom: 28px;
+      z-index: 2;
+      width: 118px;
+    }
+
+    .promo-title {
+      color: var(--ink);
+      font-size: 25px;
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+      margin-bottom: 8px;
+    }
+
+    .promo-subtitle {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .marquee-copy {
+      position: absolute;
+      left: 82px;
+      top: 96px;
+      width: 462px;
+      z-index: 2;
+    }
+
+    .marquee-logo-row {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 34px;
+    }
+
+    .marquee-logo {
+      width: 74px;
+      height: 74px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #0071e3, #0054b5);
+      box-shadow: 0 24px 48px rgba(0, 102, 204, 0.24);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 27px;
+      font-weight: 760;
+      letter-spacing: -1px;
+    }
+
+    .marquee-name {
+      font-size: 24px;
+      font-weight: 650;
+      letter-spacing: -0.2px;
+    }
+
+    .marquee-title {
+      font-size: 54px;
+      line-height: 1.06;
+      font-weight: 720;
+      letter-spacing: -0.8px;
+      margin: 0 0 18px;
+    }
+
+    .marquee-subtitle {
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.42;
+      letter-spacing: -0.2px;
+    }
+
+    .mini-panel {
+      position: absolute;
+      width: 154px;
+      right: 16px;
+      top: 36px;
+      bottom: 22px;
+      border-left: 1px solid var(--line);
+      background: var(--surface);
+      padding: 12px 10px;
+    }
+
+    .mini-panel .mini-title {
+      height: 12px;
+      width: 92px;
+      border-radius: 999px;
+      background: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .mini-panel .mini-pill {
+      width: 78px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--blue);
+      margin-bottom: 14px;
+    }
+
+    .mini-ticket {
+      padding: 8px 0;
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .mini-key {
+      width: 46px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--blue);
+      margin-bottom: 6px;
+    }
+
+    .mini-line {
+      height: 8px;
+      border-radius: 999px;
+      background: #e6e6eb;
+      margin-bottom: 5px;
+    }
+
+    .mini-line--short {
+      width: 72%;
+    }
+
+    .mini-badge {
+      width: 50px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--done-bg);
+    }
+
+    .soft-card {
+      position: absolute;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.74);
+      backdrop-filter: blur(18px);
+    }
+
+    .soft-card--one {
+      left: 72px;
+      bottom: 42px;
+      width: 126px;
+      height: 82px;
+    }
+
+    .soft-card--two {
+      left: 218px;
+      bottom: 82px;
+      width: 110px;
+      height: 66px;
+    }
+
+    .screen-label {
+      position: absolute;
+      left: 56px;
+      top: 88px;
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .screen-title {
+      position: absolute;
+      left: 56px;
+      top: 114px;
+      width: 420px;
+      font-size: 36px;
+      line-height: 1.12;
+      font-weight: 720;
+      letter-spacing: 0;
+      color: var(--ink);
+    }
+
+    .screen-note {
+      position: absolute;
+      left: 56px;
+      top: 208px;
+      width: 430px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.48;
+    }
+
+    .priority-high path { fill: #de350b; }
+    .priority-medium path { fill: #ffab00; }
+    .priority-low path { fill: #36b37e; }
+  </style>
+</head>
+<body>
+  <main id="asset" class="asset"></main>
+
+  <template id="issue-list">
+    <div class="count-row">
+      <span>8 tickets</span>
+      <span class="links"><span>Expand all</span><span>Collapse all</span></span>
+    </div>
+
+    <div class="group">
+      <div class="group-header">
+        <span class="chevron">▼</span>
+        <span class="issue-key">OPS-41</span>
+        <span class="group-title">Checkout flow stabilization</span>
+      </div>
+      <div class="children">
+        <div class="issue issue--hover">
+          <span class="priority priority-high">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2l5 8H3l5-8z"/></svg>
+          </span>
+          <div class="issue-body">
+            <div class="issue-key">OPS-83</div>
+            <div class="summary">Fix missing status sync after payment completion</div>
+            <div class="meta"><span class="badge badge--progress">IN PROGRESS</span><span class="type-icon"></span></div>
+          </div>
+        </div>
+        <div class="issue">
+          <span class="priority priority-medium">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2l5 8H3l5-8z"/></svg>
+          </span>
+          <div class="issue-body">
+            <div class="issue-key">OPS-79</div>
+            <div class="summary">Improve response cache for order details</div>
+            <div class="meta"><span class="badge badge--todo">TO DO</span><span class="type-icon"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <div class="group-header">
+        <span class="chevron">▼</span>
+        <span class="issue-key">WEB-19</span>
+        <span class="group-title">Dashboard navigation improvements</span>
+      </div>
+      <div class="children">
+        <div class="issue">
+          <span class="priority priority-low">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2l5 8H3l5-8z"/></svg>
+          </span>
+          <div class="issue-body">
+            <div class="issue-key">WEB-72</div>
+            <div class="summary">Add current location state to side navigation</div>
+            <div class="meta"><span class="badge badge--done">DONE</span><span class="type-icon"></span></div>
+          </div>
+        </div>
+        <div class="issue">
+          <span class="priority priority-medium">
+            <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2l5 8H3l5-8z"/></svg>
+          </span>
+          <div class="issue-body">
+            <div class="issue-key">WEB-68</div>
+            <div class="summary">Polish mobile filter selection UI</div>
+            <div class="meta"><span class="badge badge--progress">IN PROGRESS</span><span class="type-icon"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="issue">
+      <span class="priority priority-medium">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2l5 8H3l5-8z"/></svg>
+      </span>
+      <div class="issue-body">
+        <div class="issue-key">QA-24</div>
+        <div class="summary">Review release checklist automation</div>
+        <div class="meta"><span class="badge badge--todo">TO DO</span><span class="type-icon"></span></div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const assetName = new URLSearchParams(window.location.search).get('asset') || 'sidepanel';
+    const root = document.getElementById('asset');
+
+    function priorityList() {
+      return document.getElementById('issue-list').innerHTML;
+    }
+
+    function topbar(url = 'project.example.com/workspace') {
+      return `
+        <div class="topbar">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <div class="address">${url}</div>
+        </div>
+      `;
+    }
+
+    function webPage(extraClass = '') {
+      return `
+        <section class="webpage ${extraClass}">
+          <div class="kicker"></div>
+          <div class="headline"></div>
+          <div class="copy-line copy-line--a"></div>
+          <div class="copy-line copy-line--b"></div>
+          <div class="copy-line copy-line--c"></div>
+          <div class="board">
+            ${Array.from({ length: 6 }).map((_, index) => `
+              <div class="board-card">
+                <div class="board-title"></div>
+                <div class="board-row" style="width:${index % 2 ? 86 : 94}%"></div>
+                <div class="board-row" style="width:${index % 3 ? 66 : 78}%"></div>
+                <div class="board-row" style="width:${index % 2 ? 54 : 62}%"></div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+      `;
+    }
+
+    function panel({ floating = false, settings = false, detached = false } = {}) {
+      if (settings) {
+        return `
+          <aside class="${floating ? 'floating-panel' : `sidepanel ${detached ? 'sidepanel--detached' : ''}`}">
+            <div class="panel-header">
+              <div class="panel-title">Please Be Done</div>
+              <div class="panel-actions">
+                <span class="icon-button">↻</span>
+                <span class="icon-button icon-button--active">⚙</span>
+                <span class="icon-button">×</span>
+              </div>
+            </div>
+            <div class="settings">
+              <div class="section-label">Jira connection</div>
+              <div class="field">
+                <label>Jira domain</label>
+                <div class="input">mycompany</div>
+                <div class="hint">https://mycompany.atlassian.net</div>
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <div class="input">you@example.com</div>
+              </div>
+              <div class="field">
+                <label>API Token</label>
+                <div class="input">••••••••••••••••••••</div>
+              </div>
+              <div class="toggle">
+                <span class="track"></span>
+                <span>Show floating panel on every site</span>
+              </div>
+              <div class="save">Save</div>
+            </div>
+          </aside>
+        `;
+      }
+
+      return `
+        <aside class="${floating ? 'floating-panel' : `sidepanel ${detached ? 'sidepanel--detached' : ''}`}">
+          <div class="panel-header">
+            <div class="panel-title">Please Be Done</div>
+            <div class="panel-actions">
+              <span class="icon-button">↻</span>
+              ${floating ? '<span class="icon-button">⚙</span><span class="icon-button">×</span>' : ''}
+            </div>
+          </div>
+          <div class="filter-row">
+            <span class="pill pill--active">All</span>
+            <span class="pill">Current sprint</span>
+          </div>
+          ${floating ? `
+            <div class="status-row">
+              <span class="status-button status-button--active"><b>8</b>All</span>
+              <span class="status-button"><b>3</b>In progress</span>
+              <span class="status-button"><b>2</b>Done</span>
+            </div>
+          ` : ''}
+          ${priorityList()}
+        </aside>
+      `;
+    }
+
+    function promo() {
+      root.className = 'asset asset--promo';
+      root.innerHTML = `
+        <div class="brand">P</div>
+        <div class="promo-copy">
+          <div class="promo-title">Please<br />Be Done</div>
+          <div class="promo-subtitle">Jira tickets<br />at a glance</div>
+        </div>
+        <div class="browser browser--promo">
+          ${topbar('anywhere')}
+          <section class="mini-panel">
+            <div class="mini-title"></div>
+            <div class="mini-pill"></div>
+            ${Array.from({ length: 4 }).map(() => `
+              <div class="mini-ticket">
+                <div class="mini-key"></div>
+                <div class="mini-line"></div>
+                <div class="mini-line mini-line--short"></div>
+                <div class="mini-badge"></div>
+              </div>
+            `).join('')}
+          </section>
+        </div>
+      `;
+    }
+
+    function marquee() {
+      root.className = 'asset asset--marquee';
+      root.innerHTML = `
+        <div class="marquee-copy">
+          <div class="marquee-logo-row">
+            <div class="marquee-logo">P</div>
+            <div class="marquee-name">Please Be Done</div>
+          </div>
+          <h1 class="marquee-title">See your work<br />before opening Jira.</h1>
+          <div class="marquee-subtitle">Track assigned issues, current sprint work, and status progress from the side panel or floating panel.</div>
+        </div>
+        <div class="browser browser--marquee">
+          ${topbar('project.example.com')}
+          ${webPage('webpage--wide')}
+          ${panel({ detached: true })}
+        </div>
+      `;
+    }
+
+    function screenshotSidepanel() {
+      root.className = 'asset asset--screenshot';
+      root.innerHTML = `
+        <div class="screen-label">Chrome Side Panel</div>
+        <div class="screen-title">Keep current work visible beside the browser</div>
+        <div class="screen-note">Group assigned Jira issues by parent ticket and switch quickly between current sprint and all assigned work.</div>
+        <div class="browser">
+          ${topbar('project.example.com/roadmap')}
+          ${webPage()}
+          ${panel()}
+        </div>
+      `;
+    }
+
+    function screenshotFloating() {
+      root.className = 'asset asset--screenshot';
+      root.innerHTML = `
+        <div class="browser">
+          ${topbar('docs.example.com/spec')}
+          ${webPage('webpage--wide')}
+          <div class="toggle-tab">J</div>
+          ${panel({ floating: true })}
+        </div>
+      `;
+    }
+
+    function screenshotSettings() {
+      root.className = 'asset asset--screenshot';
+      root.innerHTML = `
+        <div class="screen-label">Secure Setup</div>
+        <div class="screen-title">Connect directly with an Atlassian API token</div>
+        <div class="screen-note">Domain, email, and API token are stored in Chrome storage, while Jira Cloud API requests are handled in the browser.</div>
+        <div class="browser">
+          ${topbar('chrome-extension://please-be-done/options.html')}
+          ${webPage('webpage--wide')}
+          ${panel({ floating: true, settings: true })}
+        </div>
+      `;
+    }
+
+    const renderers = {
+      promo,
+      marquee,
+      sidepanel: screenshotSidepanel,
+      floating: screenshotFloating,
+      settings: screenshotSettings,
+    };
+
+    (renderers[assetName] || screenshotSidepanel)();
+  </script>
+</body>
+</html>

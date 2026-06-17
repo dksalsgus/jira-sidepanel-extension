@@ -6,7 +6,7 @@ import { fetchAssignedIssues, fetchMyself } from '../utils/api.js';
 const BASE_CONFIG = {
   domain: 'example',
   email: 'user@example.com',
-  apiToken: 'ATCT-example-token',
+  apiToken: 'fake-token-for-tests',
 };
 
 test('fetchAssignedIssues posts JQL search requests with structured fields', async () => {
@@ -53,7 +53,7 @@ test('fetchAssignedIssues posts JQL search requests with structured fields', asy
     init: {
       method: 'POST',
       headers: {
-        'Authorization': 'Basic dXNlckBleGFtcGxlLmNvbTpBVENULWV4YW1wbGUtdG9rZW4=',
+        'Authorization': 'Basic dXNlckBleGFtcGxlLmNvbTpmYWtlLXRva2VuLWZvci10ZXN0cw==',
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
@@ -114,7 +114,7 @@ test('fetchMyself keeps a simple GET request shape for auth verification', async
     url: 'https://example.atlassian.net/rest/api/3/myself',
     init: {
       headers: {
-        'Authorization': 'Basic dXNlckBleGFtcGxlLmNvbTpBVENULWV4YW1wbGUtdG9rZW4=',
+        'Authorization': 'Basic dXNlckBleGFtcGxlLmNvbTpmYWtlLXRva2VuLWZvci10ZXN0cw==',
         'Accept': 'application/json',
       },
     },

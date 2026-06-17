@@ -7,7 +7,7 @@ import { ApiError } from '../utils/api.js';
 const CONFIG = {
   domain: 'example',
   email: 'user@example.com',
-  apiToken: 'ATCT-example-token',
+  apiToken: 'fake-token-for-tests',
 };
 
 test('loadIssuesWithCache emits cached issues before returning fresh issues', async () => {

@@ -59,13 +59,17 @@ Recommended assets:
 Short description:
 
 ```text
-Quickly check your assigned Jira issues from the Chrome Side Panel.
+See assigned Jira Cloud issues and current sprint work in Chrome's side panel without switching tabs.
 ```
 
 Detailed description:
 
 ```text
-Please Be Done helps you keep track of Jira issues assigned to you without keeping a separate Jira tab open.
+Keep your assigned Jira Cloud issues visible while you work. Please Be Done shows current sprint and all assigned issues in Chrome's side panel or an optional floating panel, so you can check priorities and open tickets without returning to Jira.
+
+Requirements:
+- Jira Cloud workspace under *.atlassian.net
+- Atlassian account email and API token
 
 Key features:
 - View assigned issues in the Chrome Side Panel
@@ -76,10 +80,21 @@ Key features:
 - Open Jira issues with one click
 
 Privacy:
-- Jira credentials are stored in Chrome storage
-- Jira issue data is requested directly from your Jira Cloud workspace
+- Jira credentials are stored in Chrome storage and may sync through your Chrome account
+- Credentials are not sent to or accessible by the developer
+- Jira issue data is requested directly from your configured Jira Cloud workspace
 - No external analytics, tracking, or project-owned server is used
+
+Please Be Done is an independent extension and is not affiliated with, endorsed by, or sponsored by Atlassian.
 ```
+
+The extension name shown in the listing must match `manifest.json`:
+
+```text
+Please Be Done for Jira: My Issues
+```
+
+Before publishing, confirm that the listing uses the independent Please Be Done icon and does not use Jira or Atlassian logos or visual identity.
 
 ## 6. Privacy Policy
 

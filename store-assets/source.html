@@ -140,6 +140,20 @@
       padding-right: 390px;
     }
 
+    .webpage--store-copy {
+      padding-top: 240px;
+    }
+
+    .webpage--store-copy > .kicker,
+    .webpage--store-copy > .headline,
+    .webpage--store-copy > .copy-line {
+      display: none;
+    }
+
+    .webpage--store-copy .board {
+      margin-top: 0;
+    }
+
     .kicker {
       width: 118px;
       height: 12px;
@@ -744,6 +758,7 @@
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0;
+      z-index: 2;
     }
 
     .screen-title {
@@ -756,6 +771,11 @@
       font-weight: 720;
       letter-spacing: 0;
       color: var(--ink);
+      z-index: 2;
+    }
+
+    .screen-title--settings {
+      width: 660px;
     }
 
     .screen-note {
@@ -766,6 +786,7 @@
       color: var(--muted);
       font-size: 16px;
       line-height: 1.48;
+      z-index: 2;
     }
 
     .priority-high path { fill: #de350b; }
@@ -963,7 +984,7 @@
         <div class="brand">P</div>
         <div class="promo-copy">
           <div class="promo-title">Please<br />Be Done</div>
-          <div class="promo-subtitle">Jira tickets<br />at a glance</div>
+          <div class="promo-subtitle">Assigned Jira issues at a glance</div>
         </div>
         <div class="browser browser--promo">
           ${topbar('anywhere')}
@@ -991,8 +1012,8 @@
             <div class="marquee-logo">P</div>
             <div class="marquee-name">Please Be Done</div>
           </div>
-          <h1 class="marquee-title">See your work<br />before opening Jira.</h1>
-          <div class="marquee-subtitle">Track assigned issues, current sprint work, and status progress from the side panel or floating panel.</div>
+          <h1 class="marquee-title">Your assigned Jira issues, ready when you need them.</h1>
+          <div class="marquee-subtitle">Track current sprint work and status progress from the side panel or floating panel.</div>
         </div>
         <div class="browser browser--marquee">
           ${topbar('project.example.com')}
@@ -1006,11 +1027,11 @@
       root.className = 'asset asset--screenshot';
       root.innerHTML = `
         <div class="screen-label">Chrome Side Panel</div>
-        <div class="screen-title">Keep current work visible beside the browser</div>
+        <div class="screen-title">Current sprint or every assigned issue.</div>
         <div class="screen-note">Group assigned Jira issues by parent ticket and switch quickly between current sprint and all assigned work.</div>
         <div class="browser">
           ${topbar('project.example.com/roadmap')}
-          ${webPage()}
+          ${webPage('webpage--store-copy')}
           ${panel()}
         </div>
       `;
@@ -1019,9 +1040,12 @@
     function screenshotFloating() {
       root.className = 'asset asset--screenshot';
       root.innerHTML = `
+        <div class="screen-label">Floating Panel</div>
+        <div class="screen-title">Open assigned issues from any page.</div>
+        <div class="screen-note">Filter Jira work by status without leaving the page you are using.</div>
         <div class="browser">
           ${topbar('docs.example.com/spec')}
-          ${webPage('webpage--wide')}
+          ${webPage('webpage--wide webpage--store-copy')}
           <div class="toggle-tab">J</div>
           ${panel({ floating: true })}
         </div>
@@ -1032,11 +1056,11 @@
       root.className = 'asset asset--screenshot';
       root.innerHTML = `
         <div class="screen-label">Secure Setup</div>
-        <div class="screen-title">Connect directly with an Atlassian API token</div>
+        <div class="screen-title screen-title--settings">Connect directly to Jira Cloud with your API token.</div>
         <div class="screen-note">Domain, email, and API token are stored in Chrome storage, while Jira Cloud API requests are handled in the browser.</div>
         <div class="browser">
           ${topbar('chrome-extension://please-be-done/options.html')}
-          ${webPage('webpage--wide')}
+          ${webPage('webpage--wide webpage--store-copy')}
           ${panel({ floating: true, settings: true })}
         </div>
       `;

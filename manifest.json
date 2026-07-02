@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Please Be Done",
-  "version": "1.1.0",
-  "description": "Please Be Done — quickly check your assigned Jira issues",
+  "name": "Please Be Done for Jira: My Issues",
+  "version": "1.1.1",
+  "description": "See assigned Jira Cloud issues and current sprint work in Chrome's side panel without switching tabs.",
   "minimum_chrome_version": "114",
 
   "permissions": [
@@ -28,7 +28,7 @@
   ],
 
   "action": {
-    "default_title": "Please Be Done",
+    "default_title": "Please Be Done for Jira: My Issues",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

@@ -66,6 +66,7 @@ jira-sidepanel-extension/
 
 ## 🔒 보안 및 개인정보
 
+- **개인정보처리방침**: [Privacy Policy](https://dksalsgus.github.io/jira-sidepanel-extension/privacy.html)
 - **로컬 저장**: 입력한 Jira 도메인, 이메일, API 토큰은 브라우저의 안전한 로컬 저장소(`chrome.storage.sync`)에만 저장됩니다.
 - **직접 통신**: 모든 API 요청은 사용자의 브라우저에서 Jira 서버로 직접 이루어지며, 어떠한 외부 서버로도 데이터를 전송하지 않습니다.
 - **XSS 방지**: 모든 동적 콘텐츠는 `escapeHtml` 처리를 거쳐 안전하게 렌더링됩니다.

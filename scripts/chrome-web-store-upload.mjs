@@ -87,6 +87,17 @@ async function fetchUploadStatus({ accessToken, publisherId, extensionId }) {
   });
 }
 
+async function getExpectedVersion() {
+  const manifest = JSON.parse(await readFile('manifest.json', 'utf8'));
+  return manifest.version;
+}
+
+function getSubmittedVersions(status) {
+  return status.submittedItemRevisionStatus?.distributionChannels
+    ?.map((channel) => channel.crxVersion)
+    .filter(Boolean) || [];
+}
+
 async function waitForUploadCompletion({ accessToken, publisherId, extensionId, uploadResult }) {
   let status = uploadResult;
 
@@ -147,6 +158,20 @@ async function main() {
 
   console.log('Requesting Chrome Web Store access token...');
   const accessToken = await getAccessToken({ clientId, clientSecret, refreshToken });
+
+  const expectedVersion = await getExpectedVersion();
+  const currentStatus = await fetchUploadStatus({ accessToken, publisherId, extensionId });
+  if (currentStatus.submittedItemRevisionStatus?.state === 'PENDING_REVIEW') {
+    const submittedVersions = getSubmittedVersions(currentStatus);
+    if (submittedVersions.includes(expectedVersion)) {
+      console.log(`Version ${expectedVersion} is already pending Chrome Web Store review.`);
+      return;
+    }
+
+    throw new Error(
+      `Another version is already pending Chrome Web Store review: ${JSON.stringify(submittedVersions)}`
+    );
+  }
 
   console.log(`Uploading ${zipPath} to Chrome Web Store...`);
   const uploadResult = await uploadPackage({ accessToken, publisherId, extensionId, zipPath });

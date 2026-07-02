@@ -10,7 +10,7 @@ async function loadUploadHelpers() {
     .replace('const STATUS_DELAY_MS = 5_000;', 'const STATUS_DELAY_MS = 0;')
     .replace(
       /\nmain\(\)\.catch\([\s\S]*$/,
-      '\nexport { waitForUploadCompletion };\n'
+      '\nexport { main, waitForUploadCompletion };\n'
     );
   const moduleUrl = `data:text/javascript;base64,${Buffer.from(moduleSource).toString('base64')}`;
   return import(moduleUrl);
@@ -67,4 +67,61 @@ test('polls while the Chrome Web Store V2 upload state is IN_PROGRESS', async ()
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test('skips re-upload when the same version is already pending review', async () => {
+  const { main } = await loadUploadHelpers();
+  const originalFetch = globalThis.fetch;
+  const envNames = [
+    'CWS_CLIENT_ID',
+    'CWS_CLIENT_SECRET',
+    'CWS_REFRESH_TOKEN',
+    'CWS_PUBLISHER_ID',
+    'CWS_EXTENSION_ID',
+    'ZIP_PATH',
+    'PUBLISH',
+  ];
+  const originalEnv = Object.fromEntries(envNames.map((name) => [name, process.env[name]]));
+  const requests = [];
+
+  Object.assign(process.env, {
+    CWS_CLIENT_ID: 'client',
+    CWS_CLIENT_SECRET: 'secret',
+    CWS_REFRESH_TOKEN: 'refresh',
+    CWS_PUBLISHER_ID: 'publisher',
+    CWS_EXTENSION_ID: 'extension',
+    ZIP_PATH: 'manifest.json',
+    PUBLISH: 'true',
+  });
+
+  globalThis.fetch = async (url, options) => {
+    requests.push({ url: String(url), options });
+    if (String(url).includes('oauth2.googleapis.com')) {
+      return new Response(JSON.stringify({ access_token: 'token' }), { status: 200 });
+    }
+
+    return new Response(JSON.stringify({
+      submittedItemRevisionStatus: {
+        state: 'PENDING_REVIEW',
+        distributionChannels: [{ crxVersion: '1.1.1', deployPercentage: 100 }],
+      },
+    }), { status: 200 });
+  };
+
+  try {
+    await main();
+  } finally {
+    globalThis.fetch = originalFetch;
+    for (const name of envNames) {
+      if (originalEnv[name] === undefined) {
+        delete process.env[name];
+      } else {
+        process.env[name] = originalEnv[name];
+      }
+    }
+  }
+
+  assert.equal(requests.length, 2);
+  assert.match(requests[1].url, /:fetchStatus$/);
+  assert.equal(requests[1].options.method, 'GET');
 });

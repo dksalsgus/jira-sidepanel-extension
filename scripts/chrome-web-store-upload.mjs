@@ -70,7 +70,7 @@ function hasUploadErrors(status) {
   return Boolean(
     status.itemError?.length ||
     status.fieldError?.length ||
-    status.uploadState === 'FAILURE'
+    status.uploadState === 'FAILED'
   );
 }
 
@@ -95,11 +95,11 @@ async function waitForUploadCompletion({ accessToken, publisherId, extensionId, 
       throw new Error(`Chrome Web Store upload failed: ${JSON.stringify(status)}`);
     }
 
-    if (status.uploadState === 'SUCCESS') {
+    if (status.uploadState === 'SUCCEEDED') {
       return status;
     }
 
-    if (status.uploadState !== 'UPLOAD_IN_PROGRESS') {
+    if (status.uploadState !== 'IN_PROGRESS') {
       throw new Error(`Unexpected Chrome Web Store upload state: ${JSON.stringify(status)}`);
     }
 

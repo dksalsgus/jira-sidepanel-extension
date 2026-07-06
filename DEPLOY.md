@@ -150,7 +150,7 @@ View your assigned Jira tickets at a glance.
 
 ### 3.4 개인정보처리방침
 
-`privacy.html` 링크 입력 또는 파일 업로드
+Chrome Web Store 개인정보처리방침 URL에 `https://jira-sidepanel-extension.spamfam.kr/privacy.html`을 입력합니다.
 
 ### 3.5 게시
 
